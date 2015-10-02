@@ -69,6 +69,29 @@ def get_next_images():
 
     return json.dumps(next_image_data)
 
+
+@predict_game.route('/log_error', methods=['POST','GET'])
+def log_error():
+
+    #Do some stuff to log the error
+
+    update_images()
+    return get_next_images()
+    # next_image_data = {}
+
+    # next_image_data['image_1_src'] = app.current_image_1.url
+    # next_image_data['image_1_title']  = app.current_image_1.title
+
+    # next_image_data['image_2_src'] = app.current_image_2.url
+    # next_image_data['image_2_title'] = app.current_image_2.title
+
+    # next_image_data['status'] = 'OK'
+
+    # # print request.cookies
+
+    # return json.dumps(next_image_data)
+
+
 def update_images():
     [image_1, image_2] = Post.query.order_by(db.func.random()).limit(2).all()
     app.current_image_1 = image_1

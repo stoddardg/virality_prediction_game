@@ -39,8 +39,8 @@ class Vote(db.Model):
     user_choice = db.Column(db.Integer)
     correct_answer = db.Column(db.Integer)
 
-    post_id_1 = db.Column(db.Integer)
-    post_id_2 = db.Column(db.Integer)
+    post_id_1 = db.Column(db.String)
+    post_id_2 = db.Column(db.String)
     experiment_condition = db.Column(db.Integer)
 
     def __init__(self, user_id, post_id_1, post_id_2, user_choice, correct_answer, experiment_condition=-1):

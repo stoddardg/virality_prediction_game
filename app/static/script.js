@@ -4,9 +4,7 @@ $(function() {
             url: '/record_vote',
             data: {choice : 1},
             success: function(data ) {
-                console.log(data);
                 json_result = jQuery.parseJSON(data);
-                console.log(json_result)
                 $("#image_1_score").html(json_result.image_1_karma);
                 $("#image_2_score").html(json_result.image_2_karma);
                 $("#image_1_score").css('visibility', 'visible');
@@ -25,9 +23,7 @@ $(function() {
             url: '/record_vote',
             data: {choice : 2},
             success: function(data ) {
-                console.log(data);
                 json_result = jQuery.parseJSON(data);
-                console.log(json_result)
                 $("#image_1_score").html(json_result.image_1_karma);
                 $("#image_2_score").html(json_result.image_2_karma);
                 $("#image_1_score").css('visibility', 'visible');
@@ -38,6 +34,35 @@ $(function() {
         });
     });
 });
+
+$(function() {
+    $('#not_sure_button').click(function() {
+        $.ajax({
+            url: '/record_vote',
+            data: {choice : 0},
+            success: function(data ) {
+                json_result = jQuery.parseJSON(data);
+                $("#image_1_score").html(json_result.image_1_karma);
+                $("#image_2_score").html(json_result.image_2_karma);
+                $("#image_1_score").css('visibility', 'visible');
+                $("#image_2_score").css('visibility', 'visible');
+               disable_buttons()
+              
+            }
+        });
+    });
+});
+
+$(function() {
+    $('#error_button').click(function() {
+        $.ajax({
+            url: '/log_error',
+            data: {choice : -1},
+            success: update_images
+        });
+    });
+});
+
 
 $(function() {
     $('#next_button').click(function() {
