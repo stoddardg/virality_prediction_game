@@ -3,7 +3,9 @@ from flask import Flask, render_template
 
 # Import SQLAlchemy
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
 
+from sqlalchemy import ForeignKey
 import os
 
 
@@ -30,6 +32,7 @@ def not_found(error):
 
 current_image_1 = None
 current_image_2 = None
+current_picture_source = None
 
 
 from controllers import predict_game

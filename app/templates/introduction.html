@@ -1,0 +1,19 @@
+{% extends "template.html" %}
+
+{% block intro_text %}
+<p>Welcome to my website</p>
+
+<!-- Single button -->
+<div class="btn-group">
+  <button type="button" class="btn btn-default btn-large dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Choose subreddit <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a href="/render_game?article_source=aww">Aww</a></li>
+    <li><a href="/render_game?article_source=pics">Pics</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li role="separator" class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</div>
+{%endblock %}

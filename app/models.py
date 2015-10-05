@@ -1,4 +1,10 @@
 from app import db
+from sqlalchemy.orm import relationship
+
+from sqlalchemy import ForeignKey
+
+
+
 
 db.create_all()
 # Define a User model
@@ -25,6 +31,25 @@ class Post(db.Model):
 
     def __repr__(self):
         return '[ %s]: score %s' % (self.title, self.score)
+
+
+class User(db.Model):
+    uuid = db.Column(db.String, primary_key=True)
+
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
+
+    current_image_1_id = db.Column(db.Integer, ForeignKey("post.id"), default=None)
+    current_image_2_id = db.Column(db.Integer, ForeignKey("post.id"), default=None)
+
+    current_image_1 = relationship("Post", foreign_keys=[current_image_1_id])
+    current_image_2 = relationship("Post", foreign_keys=[current_image_2_id])
+
+    current_image_source = db.Column(db.String, default=None)
+
+
+
 
 
 class Vote(db.Model):
