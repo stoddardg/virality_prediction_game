@@ -5,7 +5,7 @@ import json
 import os
 import uuid
 
-from models import Post, Vote, User, SurveyResult
+from models import Post, Vote, User, SurveyResult, UserScore
 from forms import SurveyForm
 from app import db
 from app import app
@@ -22,7 +22,7 @@ def record_vote():
 
   
     current_uuid = get_uuid_from_cookie(request.cookies)
-    current_user = get_current_user(current_uuid)
+    current_user, current_score = get_current_user_and_score(current_uuid)
     user_choice = int(request.args.get('choice'))
 
     print type(user_choice)
@@ -37,10 +37,20 @@ def record_vote():
     else:
         correct_answer = 0 
 
+
+
+    if current_score.num_correct is None:
+        current_score.num_correct = 0
+    if current_score.num_wrong is None:
+        current_score.num_wrong = 0
+
+
     if user_choice == correct_answer:
         user_correct = 1
+        current_score.num_correct = current_score.num_correct + 1
     else:
         user_correct = 0
+        current_score.num_wrong = current_score.num_wrong + 1
 
     new_vote = Vote(current_uuid, image_1.reddit_id, image_2.reddit_id, user_choice, correct_answer)
     db.session.add(new_vote)
@@ -56,7 +66,18 @@ def record_vote():
     else:
         image_2_score = 0
 
-    return json.dumps({'status':'OK', 'image_1_karma':image_1_score, 'image_2_karma':image_2_score, 'correct':user_correct})
+
+    percent_correct = format_correct_percentage(current_score)
+
+    ret_vals = {
+    'status':'OK',
+    'image_1_karma':image_1_score,
+    'image_2_karma':image_2_score,
+    'correct':user_correct,
+    'percent_correct':percent_correct
+    }
+
+    return json.dumps(ret_vals)
 
 
 def check_valid_picture_source(subreddit):
@@ -69,8 +90,12 @@ def get_next_images():
     current_uuid =  get_uuid_from_cookie(request.cookies)
     update_images(current_uuid)
 
-    current_user = get_current_user(current_uuid)
-
+    current_user, current_score = get_current_user_and_score(current_uuid)
+    
+    if current_score.num_seen:
+        current_score.num_seen = current_user.num_seen + 1
+    else:
+        current_score.num_seen = 0 
     next_image_data = {}
 
     next_image_data['image_1_src'] = current_user.current_image_1.url
@@ -81,7 +106,7 @@ def get_next_images():
 
     next_image_data['status'] = 'OK'
 
-
+    db.session.commit()
     return json.dumps(next_image_data)
 
 @predict_game.route('/get_next_images_validation', methods=['POST','GET'])
@@ -175,7 +200,9 @@ def start_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
     update_article_source(current_uuid, subreddit)
     update_images(current_uuid)
-    current_user = get_current_user(current_uuid)
+    current_user, current_score = get_current_user_and_score(current_uuid)
+
+    percent_correct = format_correct_percentage(current_score)
 
     response = make_response( render_template('pic_game.html', 
         pic_source_url = pic_source_url,
@@ -183,7 +210,8 @@ def start_game():
         image_1_title = current_user.current_image_1.title,
         image_1_src = current_user.current_image_1.url,
         image_2_title = current_user.current_image_2.title,
-        image_2_src = current_user.current_image_2.url
+        image_2_src = current_user.current_image_2.url,
+        starting_score = percent_correct
         )
     )
     response.set_cookie(UUID_NAME, current_uuid)
@@ -232,7 +260,7 @@ def check_images():
     response.set_cookie(UUID_NAME, current_uuid)
     return response
 
-def get_current_user(cookie_uuid):
+def get_current_user(cookie_uuid, subreddit=None):
     current_user = User.query.get(cookie_uuid)
     if current_user is None:
         new_user = User(uuid=cookie_uuid)
@@ -243,7 +271,38 @@ def get_current_user(cookie_uuid):
     return current_user
 
 
+def get_current_user_and_score(cookie_uuid):
+    current_user = User.query.get(cookie_uuid)
+    if current_user is None:
+        new_user = User(uuid=cookie_uuid)
+        db.session.add(new_user)
+        db.session.commit()    
+        print 'NEW USER'
+        return new_user
+    
+    current_score = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source).limit(1).first()
+    if current_score is None:
+        current_score = UserScore(uuid=current_user.uuid, subreddit=current_user.current_image_source)
+        db.session.add(current_score)
+        db.session.commit()
+    # # else:
+    #     current_score = current_score_results.one()
+
+    return current_user, current_score
+
+def format_correct_percentage(current_score):
+
+    num_answered = current_score.num_correct + current_score.num_wrong
+    if num_answered == 0:
+        return 100
+
+    percent_correct = current_score.num_correct / (1.0*num_answered)
+    percent_correct *= 100
+    percent_correct = int(percent_correct)
+    return percent_correct
+
 def get_uuid_from_cookie(cookie):
+    print cookie
     if (UUID_NAME in cookie.keys()) == False:
         user_id = str(uuid.uuid4())
         print 'NOT HERE BEFORE'
@@ -251,6 +310,7 @@ def get_uuid_from_cookie(cookie):
         user_id = request.cookies.get(UUID_NAME)
         print 'HERE BEFORE'
     return user_id
+
 
 
 def update_article_source(current_uuid, article_source):

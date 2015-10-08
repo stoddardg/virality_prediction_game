@@ -59,6 +59,20 @@ class User(db.Model):
 
     current_image_source = db.Column(db.String, default=None)
 
+    num_correct = db.Column(db.Integer, default=0)
+    num_wrong = db.Column(db.Integer, default=0)
+    num_seen = db.Column(db.Integer, default=0)
+
+
+class UserScore(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String, index=True)
+    subreddit = db.Column(db.String, index=True)
+    num_correct = db.Column(db.Integer, default=0)
+    num_wrong = db.Column(db.Integer, default=0)
+    num_seen = db.Column(db.Integer, default=0)
+
 
 
 class SurveyResult(db.Model):

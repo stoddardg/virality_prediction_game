@@ -170,6 +170,7 @@ function update_images_validation(data)
 function grade_result(json_data)
 {
     console.log(json_data)
+
     if(json_result.correct == 1)
     {
         $("#feedback_symbol").attr('src','../static/200px-Checkmark_green.svg.png')
@@ -183,28 +184,29 @@ function grade_result(json_data)
 
     }
     $("#feedback_symbol").css('visibility', 'visible')   
+    $("#correct_percentage").html(json_data['percent_correct'])
 }
 
 function disable_buttons()
 {
-    $("#next_button").prop('disabled',false);
+    // $("#next_button").prop('disabled',false);
 
     $("#vote_button_1").prop('disabled', true);
     $("#vote_button_2").prop('disabled', true);
-    $("#not_sure_button").prop('disabled', true);
-    $("#error_button").prop('disabled', true);
+    // $("#not_sure_button").prop('disabled', true);
+    // $("#error_button").prop('disabled', true);
 
 }
 
 function enable_buttons()
 {
-    $("#next_button").prop('disabled',true);
+    // $("#next_button").prop('disabled',true);
     $("#feedback_symbol").css('visibility','hidden')
 
 
     $("#vote_button_1").prop('disabled', false);
     $("#vote_button_2").prop('disabled', false);
-    $("#not_sure_button").prop('disabled', false);
-    $("#error_button").prop('disabled', false);
+    // $("#not_sure_button").prop('disabled', false);
+    // $("#error_button").prop('disabled', false);
 }
 
