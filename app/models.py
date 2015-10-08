@@ -22,15 +22,26 @@ class Post(db.Model):
     reddit_id = db.Column(db.String, unique=True)
     subreddit = db.Column(db.String)
 
-    def __init__(self, url, title, score, reddit_id, subreddit):
+    month_posted = db.Column(db.Integer)
+    year_posted = db.Column(db.Integer)
+
+    hand_validated = db.Column(db.Boolean, default=None)
+    show_to_users = db.Column(db.Boolean, default=None)
+
+
+
+    def __init__(self, url, title, score, reddit_id, subreddit, year_posted, month_posted):
         self.url = url
         self.title = title
         self.score = score
         self.reddit_id = reddit_id
         self.subreddit = subreddit
+        self.year_posted = year_posted
+        self.month_posted = month_posted
 
     def __repr__(self):
         return '[ %s]: score %s' % (self.title, self.score)
+
 
 
 class User(db.Model):
@@ -50,7 +61,15 @@ class User(db.Model):
 
 
 
+class SurveyResult(db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
 
+    type_of_use = db.Column(db.String)
+    frequency_of_use = db.Column(db.String)
+    length_of_use = db.Column(db.String)
 
 class Vote(db.Model):
 

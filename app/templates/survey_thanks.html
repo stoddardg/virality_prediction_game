@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+
+{% block intro_text %}
+<H2>Thanks!</H2>
+<div class="btn-group">
+    <button type="button" class="btn btn-default btn-large dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Return to game <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="/render_game?article_source=aww">Aww</a></li>
+      <li><a href="/render_game?article_source=pics">Pics</a></li>
+    </ul>
+</div>
+{% endblock %}

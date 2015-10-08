@@ -1,7 +1,9 @@
 {% extends "template.html" %}
 
 {% block intro_text %}
-<p>Welcome to my website</p>
+
+<p>What makes an image popular on Reddit? Is there some secret sauce or is all just random? This game tests your ability to identify popularity on Reddit. In each round you will see a pair of pictures that were posted to the same subreddit in the same month during 2014. Try to guess which one received more upvotes. To begin, choose a subreddit from the list below: 
+
 
 <!-- Single button -->
 <div class="btn-group">
@@ -11,9 +13,6 @@
   <ul class="dropdown-menu">
     <li><a href="/render_game?article_source=aww">Aww</a></li>
     <li><a href="/render_game?article_source=pics">Pics</a></li>
-    <li><a href="#">Something else here</a></li>
-    <li role="separator" class="divider"></li>
-    <li><a href="#">Separated link</a></li>
   </ul>
 </div>
 {%endblock %}
