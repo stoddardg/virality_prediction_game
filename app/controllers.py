@@ -8,7 +8,8 @@ import uuid
 from models import Post, Vote, User, SurveyResult
 from forms import SurveyForm
 from app import db
-import app
+from app import app
+# import app
 predict_game = Blueprint("app",__name__)
 
 
@@ -192,7 +193,7 @@ def start_game():
 @predict_game.route('/check_images')
 def check_images():
     
-    if app.ENABLE_IMAGE_MODERATION == False:
+    if app.config['ENABLE_IMAGE_MODERATION'] == False:
         return index()
 
     subreddit = request.args.get('article_source')
