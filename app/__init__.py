@@ -31,8 +31,6 @@ current_image_1 = None
 current_image_2 = None
 current_picture_source = None
 
-ENABLE_IMAGE_MODERATION = False
-APPROVED_IMAGES_ONLY = True
 
 from controllers import predict_game
 

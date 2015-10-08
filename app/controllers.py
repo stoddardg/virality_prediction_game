@@ -263,7 +263,7 @@ def update_images(current_uuid):
     current_user = get_current_user(current_uuid)
     query_kwargs = {}
 
-    if app.APPROVED_IMAGES_ONLY == True:
+    if app.config['APPROVED_IMAGES_ONLY'] == True:
         query_kwargs['show_to_users'] = 't'
 
     if current_user.current_image_source is not None:
