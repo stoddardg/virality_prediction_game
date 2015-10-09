@@ -56,63 +56,7 @@ $(function() {
     });
 });
 
-$(function() {
-    $('#not_sure_button').click(function() {
-        $.ajax({
-            url: '/record_vote',
-            data: {choice : -1},
-            success: function(data ) {
-                json_result = jQuery.parseJSON(data);
-                $("#image_1_score").html(json_result.image_1_karma);
-                $("#image_2_score").html(json_result.image_2_karma);
-                $("#image_1_score").css('visibility', 'visible');
-                $("#image_2_score").css('visibility', 'visible');
-               disable_buttons()
-              
-            }
-        });
-    });
-});
 
-$(function() {
-    $('#tied_button').click(function() {
-        $.ajax({
-            url: '/record_vote',
-            data: {choice : 0},
-            success: function(data ) {
-                json_result = jQuery.parseJSON(data);
-                $("#image_1_score").html(json_result.image_1_karma);
-                $("#image_2_score").html(json_result.image_2_karma);
-                $("#image_1_score").css('visibility', 'visible');
-                $("#image_2_score").css('visibility', 'visible');
-               disable_buttons()
-               grade_result(json_result);
-              
-            }
-        });
-    });
-});
-
-
-$(function() {
-    $('#error_button').click(function() {
-        $.ajax({
-            url: '/log_error',
-            data: {choice : -1},
-            success: update_images
-        });
-    });
-});
-
-
-// function click_next_button {
-//     $('#next_button').click(function() {
-//         $.ajax({
-//             url: '/get_next_images',
-//             success: update_images
-//         })
-//         });
-// });
 
 var next_button_clicked = 0;
 $(function() {
@@ -144,14 +88,16 @@ function update_images(data)
         $("#image_1_link").attr('href', json_result.image_1_src)
         $("#image_1_title").html(json_result.image_1_title)
         $("#image_1_score").css('visibility', 'hidden')
+        $("#vote_button_1").prop('disabled', false);
+
     })
-
-
     $("#image_2").attr('src',json_result.image_2_src)
     $("#image_2").on('load',function(){
         $("#image_2_link").attr('href', json_result.image_2_src)
         $("#image_2_title").html(json_result.image_2_title)
         $("#image_2_score").css('visibility', 'hidden')
+        $("#vote_button_2").prop('disabled', false);
+
     })
     enable_buttons()
 }
@@ -165,18 +111,11 @@ function update_images_validation(data)
     $("#image_1_id").html(json_result.image_1_id)
     $("#image_1_title").html(json_result.image_1_title)
 
-    // $("#image_1_score").css('visibility', 'hidden')
-
-
-
     $("#image_2").attr('src',json_result.image_2_src)
     $("#image_2_link").attr('href', json_result.image_2_src)
     $("#image_2_id").html(json_result.image_2_id)
     $("#image_2_title").html(json_result.image_2_title)
 
-    // $("#image_2_score").css('visibility', 'hidden')
-
-    // enable_buttons()
 }
 
 
@@ -208,29 +147,19 @@ function grade_result(json_data)
     $("#correct_percentage").html(json_data['percent_correct'])
 
     next_button_clicked = 0
-    setTimeout(click_next_button, 2000)
+    setTimeout(click_next_button, 1000)
 }
 
 function disable_buttons()
 {
-    // $("#next_button").prop('disabled',false);
 
     $("#vote_button_1").prop('disabled', true);
     $("#vote_button_2").prop('disabled', true);
-    // $("#not_sure_button").prop('disabled', true);
-    // $("#error_button").prop('disabled', true);
 
 }
 
 function enable_buttons()
 {
-    // $("#next_button").prop('disabled',true);
     $("#feedback_symbol").css('visibility','hidden')
-
-
-    $("#vote_button_1").prop('disabled', false);
-    $("#vote_button_2").prop('disabled', false);
-    // $("#not_sure_button").prop('disabled', false);
-    // $("#error_button").prop('disabled', false);
 }
 

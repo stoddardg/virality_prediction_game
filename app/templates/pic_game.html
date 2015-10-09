@@ -3,7 +3,7 @@
 <div class="container">
 
 {% block intro_text %}
-<p>These two images were both posted to <a href={{pic_source_url}}> {{pic_source_name}} </a>. Guess which one received more upvotes, or if they received an equal amount. After you vote, you'll see which received a higher score on Reddit.  If you aren't sure, or something is wrong with a photo, just hit 'Next Pair'  </p>
+<p>These two images were both posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}} </a>. Guess which one received more upvotes. After you vote, you'll see which received a higher score on Reddit.  If you aren't sure, or something is wrong with a photo, just hit 'Next Pair'. A new pair will autoload after voting.   </p>
 
 <p> Use the menu below to switch subreddits. When you are done playing, remember to fill out the survey.  </p>
 
@@ -81,7 +81,6 @@
     </div>   
     <div class="col-sm-1"></div>
     <div class="col-sm-2">
-    <!-- <img class="img-responsive" id='feedback_symbol' src="../static/200px-Checkmark_green.svg.png" style="visibility: hidden"  />  -->
     </div>
 
     <div class="col-sm-1"></div>             
@@ -99,12 +98,6 @@
 
     <div class="col-sm-4">
       <div class="btn-group-vertical btn-block btn-group-lg">
-       <!--  <button type="button" id="tied_button" class="btn btn-success" >Tied </button>
-        <br></br>
-        <button type="button" id="not_sure_button" class="btn btn-primary" > Not sure </button>
-        <br></br>
-        <button type="button" id="error_button" class="btn btn-info" > Image(s) didn't load </button>
-        <br></br> -->
         <button type="button" id="next_button" class="btn btn-info" > Next Pair </button>
       </div>
     </div>             
