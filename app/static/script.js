@@ -105,8 +105,19 @@ $(function() {
 });
 
 
+// function click_next_button {
+//     $('#next_button').click(function() {
+//         $.ajax({
+//             url: '/get_next_images',
+//             success: update_images
+//         })
+//         });
+// });
+
+var next_button_clicked = 0;
 $(function() {
     $('#next_button').click(function() {
+        next_button_clicked = 1
         $.ajax({
             url: '/get_next_images',
             success: update_images
@@ -129,17 +140,19 @@ function update_images(data)
     json_result = jQuery.parseJSON(data);
 
     $("#image_1").attr('src',json_result.image_1_src)
-    $("#image_1_link").attr('href', json_result.image_1_src)
-    $("#image_1_title").html(json_result.image_1_title)
-    $("#image_1_score").css('visibility', 'hidden')
-
+    $("#image_1").on('load', function(){
+        $("#image_1_link").attr('href', json_result.image_1_src)
+        $("#image_1_title").html(json_result.image_1_title)
+        $("#image_1_score").css('visibility', 'hidden')
+    })
 
 
     $("#image_2").attr('src',json_result.image_2_src)
-    $("#image_2_link").attr('href', json_result.image_2_src)
-    $("#image_2_title").html(json_result.image_2_title)
-    $("#image_2_score").css('visibility', 'hidden')
-
+    $("#image_2").on('load',function(){
+        $("#image_2_link").attr('href', json_result.image_2_src)
+        $("#image_2_title").html(json_result.image_2_title)
+        $("#image_2_score").css('visibility', 'hidden')
+    })
     enable_buttons()
 }
 
@@ -167,9 +180,17 @@ function update_images_validation(data)
 }
 
 
+
+function click_next_button(){
+    if(next_button_clicked == 0)
+    {    
+        $("#next_button").click()
+        next_button_clicked = 1
+    }
+}
+
 function grade_result(json_data)
 {
-    console.log(json_data)
 
     if(json_result.correct == 1)
     {
@@ -185,6 +206,9 @@ function grade_result(json_data)
     }
     $("#feedback_symbol").css('visibility', 'visible')   
     $("#correct_percentage").html(json_data['percent_correct'])
+
+    next_button_clicked = 0
+    setTimeout(click_next_button, 2000)
 }
 
 function disable_buttons()
