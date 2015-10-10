@@ -294,7 +294,8 @@ def format_correct_percentage(current_score):
 
     num_answered = current_score.num_correct + current_score.num_wrong
     if num_answered == 0:
-        return 100
+        return '--'
+        # return 100
 
     percent_correct = current_score.num_correct / (1.0*num_answered)
     percent_correct *= 100

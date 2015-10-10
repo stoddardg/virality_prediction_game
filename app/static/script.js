@@ -140,11 +140,14 @@ function grade_result(json_data)
     else
     {
         $("#feedback_symbol").attr('src','../static/200px-X_mark.svg.png')
-        $("#feedback_symbol").attr('width','70%')
+        $("#feedback_symbol").attr('width','100%')
 
     }
-    $("#feedback_symbol").css('visibility', 'visible')   
-    $("#correct_percentage").html(json_data['percent_correct'])
+    
+    $("#feedback_symbol").one('load', function(){
+        $("#feedback_symbol").css('visibility', 'visible')   
+        $("#correct_percentage").html(json_data['percent_correct'])
+    })
 
     next_button_clicked = 0
     setTimeout(click_next_button, 1000)
