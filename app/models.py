@@ -30,7 +30,7 @@ class Post(db.Model):
 
 
 
-    def __init__(self, url, title, score, reddit_id, subreddit, year_posted, month_posted):
+    def __init__(self, url, title, score, reddit_id, subreddit, year_posted, month_posted, hand_validated=None, show_to_users=None):
         self.url = url
         self.title = title
         self.score = score
@@ -38,6 +38,10 @@ class Post(db.Model):
         self.subreddit = subreddit
         self.year_posted = year_posted
         self.month_posted = month_posted
+        self.hand_validated = hand_validated
+        self.show_to_users = show_to_users
+
+
 
     def __repr__(self):
         return '[ %s]: score %s' % (self.title, self.score)
