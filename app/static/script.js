@@ -149,6 +149,11 @@ function grade_result(json_data)
         $("#correct_percentage").html(json_data['percent_correct'])
     })
 
+    if(json_data.show_survey == 1)
+    {
+        $("#survey_message").css('visibility','visible')
+    }
+
     next_button_clicked = 0
     setTimeout(click_next_button, 1000)
 }

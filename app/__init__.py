@@ -31,6 +31,8 @@ current_image_1 = None
 current_image_2 = None
 current_picture_source = None
 
+#Length to store cookie (in seconds)
+MAX_COOKIE_AGE = 4*3600
 
 from controllers import predict_game
 

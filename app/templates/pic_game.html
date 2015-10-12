@@ -5,10 +5,13 @@
 {% block intro_text %}
 <p>These two images were both posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}} </a>. Guess which one received a higher score. After you vote, you'll see which received a higher score on Reddit.  If you aren't sure, or something is wrong with a photo, just hit 'Next Pair'. A new pair will autoload after voting.   </p>
 
-<p> Use the menu below to switch subreddits. When you are done playing, remember to fill out the survey.  </p>
+
+
 
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
+  <p> Use the menu below to switch subreddits. </p>
+
     <div class="btn-group">
         <button type="button" class="btn btn-default btn-large dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Choose new subreddit <span class="caret"></span>
@@ -19,10 +22,12 @@
         </ul>
     </div>
   </div>
-  <div class="col-sm2">
-    <a href="/survey" class="btn btn-default btn-large" role="button">Take Survey</a>
+  <div class="col-sm-6" id='survey_message' style="visibility: hidden" >
+  <span  > <p> When you are done, please fill out the survey.  </p>
+    <div class = "btn-group">
+      <a href="/survey" class="btn btn-default btn-large" role="button">Take Survey</a>
+    </div>
   </div>
-  <!--</div> -->
 </div>
 {%endblock %}
 

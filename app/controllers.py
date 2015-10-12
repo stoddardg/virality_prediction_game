@@ -69,6 +69,9 @@ def record_vote():
 
     percent_correct = format_correct_percentage(current_score)
 
+
+
+
     ret_vals = {
     'status':'OK',
     'image_1_karma':image_1_score,
@@ -76,6 +79,10 @@ def record_vote():
     'correct':user_correct,
     'percent_correct':percent_correct
     }
+
+    if current_score.num_correct + current_score.num_wrong >= 10:
+        ret_vals['show_survey'] = 1
+
 
     return json.dumps(ret_vals)
 
@@ -107,6 +114,9 @@ def get_next_images():
     next_image_data['status'] = 'OK'
 
     db.session.commit()
+
+    print next_image_data
+
     return json.dumps(next_image_data)
 
 @predict_game.route('/get_next_images_validation', methods=['POST','GET'])
@@ -384,7 +394,7 @@ def index():
     response = make_response(render_template('introduction.html'))
     
     current_uuid = get_uuid_from_cookie(request.cookies)
-    response.set_cookie(UUID_NAME, current_uuid)
+    response.set_cookie(UUID_NAME, current_uuid, max_age = app.MAX_COOKIE_AGE)
     current_user = get_current_user(current_uuid)
     update_images(current_uuid)
     return response
