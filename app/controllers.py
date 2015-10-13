@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.random import choice
 
 from flask import Blueprint, render_template, request, make_response
 import json
@@ -9,6 +10,8 @@ from models import Post, Vote, User, SurveyResult, UserScore
 from forms import SurveyForm
 from app import db
 from app import app
+
+from app import MAX_COOKIE_AGE
 # import app
 predict_game = Blueprint("app",__name__)
 
@@ -18,14 +21,9 @@ UUID_NAME = 'guessit_uuid'
 @predict_game.route('/record_vote', methods=['POST','GET'])
 def record_vote():
 
-    print request.args.get('choice')
-
-  
     current_uuid = get_uuid_from_cookie(request.cookies)
     current_user, current_score = get_current_user_and_score(current_uuid)
     user_choice = int(request.args.get('choice'))
-
-    print type(user_choice)
 
     image_1 = current_user.current_image_1
     image_2 = current_user.current_image_2
@@ -69,9 +67,6 @@ def record_vote():
 
     percent_correct = format_correct_percentage(current_score)
 
-
-
-
     ret_vals = {
     'status':'OK',
     'image_1_karma':image_1_score,
@@ -110,83 +105,11 @@ def get_next_images():
 
     next_image_data['image_2_src'] = current_user.current_image_2.url
     next_image_data['image_2_title']  = current_user.current_image_2.title
-
     next_image_data['status'] = 'OK'
-
     db.session.commit()
-
-    print next_image_data
 
     return json.dumps(next_image_data)
 
-@predict_game.route('/get_next_images_validation', methods=['POST','GET'])
-def get_next_images_validation():
-
-    current_uuid =  get_uuid_from_cookie(request.cookies)
-    current_user = get_current_user(current_uuid)
-
-    current_user.current_image_1.hand_validated = True
-    current_user.current_image_2.hand_validated = True
-
-    if current_user.current_image_1.show_to_users is None:
-        current_user.current_image_1.show_to_users = True
-
-    if current_user.current_image_2.show_to_users is None:
-        current_user.current_image_2.show_to_users = True
-
-    db.session.commit()
-
-
-    update_images_validation(current_uuid)
-
-    next_image_data = {}
-
-    next_image_data['image_1_src'] = current_user.current_image_1.url
-    next_image_data['image_1_id']  = current_user.current_image_1.reddit_id
-    next_image_data['image_1_title']  = current_user.current_image_1.title
-
-
-
-
-    next_image_data['image_2_src'] = current_user.current_image_2.url
-    next_image_data['image_2_id']  = current_user.current_image_2.reddit_id
-    next_image_data['image_2_title']  = current_user.current_image_2.title
-
-
-    next_image_data['status'] = 'OK'
-
-
-    return json.dumps(next_image_data)
-
-
-@predict_game.route('/log_error', methods=['POST','GET'])
-def log_error():
-
-    #Do some stuff to log the error
-
-    # update_images(request.cookies)
-    return get_next_images()
-
-@predict_game.route('/remove_image', methods=['POST','GET'])
-def remove_image():
-    print 'remove image called'
-    print request.args.get('id')
-
-    image_id = int(request.args.get('id'))
-
-    current_uuid =  get_uuid_from_cookie(request.cookies)
-    current_user = get_current_user(current_uuid)
-
-    if image_id == 1:
-        temp = current_user.current_image_1
-
-    if image_id == 2:
-        temp = current_user.current_image_2
-        
-    temp.show_to_users = False
-    db.session.commit()
-
-    return json.dumps({'status':'OK'})
 
 @predict_game.route('/render_game')
 def start_game():
@@ -228,55 +151,12 @@ def start_game():
     return response
 
 
-@predict_game.route('/check_images')
-def check_images():
-    
-    if app.config['ENABLE_IMAGE_MODERATION'] == False:
-        return index()
-
-    subreddit = request.args.get('article_source')
-    
-    if subreddit == 'aww':
-        pic_source_url = "http://www.reddit.com/r/aww"
-        pic_source_name = 'r/aww'
-    if subreddit == 'pics':
-        pic_source_url = "http://www.reddit.com/r/pics"
-        pic_source_name = 'r/pics'
-
-    if subreddit is None:
-        pic_source_url = "http://www.reddit.com/r/aww"
-        pic_source_name = 'r/aww'
-        subreddit = 'aww'
-
-    #We should first check that the game is actually there
-
-
-    current_uuid = get_uuid_from_cookie(request.cookies)
-    update_article_source(current_uuid, subreddit)
-    update_images_validation(current_uuid)
-    current_user = get_current_user(current_uuid)
-
-    response = make_response( render_template('validate_images.html', 
-        pic_source_url = pic_source_url,
-        pic_source_name = pic_source_name,
-        image_1_id = current_user.current_image_1.id,
-        image_1_title = current_user.current_image_1.title,
-        image_1_src = current_user.current_image_1.url,
-        image_2_id = current_user.current_image_2.id,
-        image_2_src = current_user.current_image_2.url,
-        image_2_title = current_user.current_image_2.title
-        )
-    )
-    response.set_cookie(UUID_NAME, current_uuid)
-    return response
-
 def get_current_user(cookie_uuid, subreddit=None):
     current_user = User.query.get(cookie_uuid)
     if current_user is None:
         new_user = User(uuid=cookie_uuid)
         db.session.add(new_user)
         db.session.commit()    
-        print 'NEW USER'
         return new_user
     return current_user
 
@@ -287,7 +167,6 @@ def get_current_user_and_score(cookie_uuid):
         new_user = User(uuid=cookie_uuid)
         db.session.add(new_user)
         db.session.commit()    
-        print 'NEW USER'
         return new_user
     
     current_score = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source).limit(1).first()
@@ -295,8 +174,7 @@ def get_current_user_and_score(cookie_uuid):
         current_score = UserScore(uuid=current_user.uuid, subreddit=current_user.current_image_source)
         db.session.add(current_score)
         db.session.commit()
-    # # else:
-    #     current_score = current_score_results.one()
+
 
     return current_user, current_score
 
@@ -313,13 +191,10 @@ def format_correct_percentage(current_score):
     return percent_correct
 
 def get_uuid_from_cookie(cookie):
-    print cookie
     if (UUID_NAME in cookie.keys()) == False:
         user_id = str(uuid.uuid4())
-        print 'NOT HERE BEFORE'
     else:
         user_id = request.cookies.get(UUID_NAME)
-        print 'HERE BEFORE'
     return user_id
 
 
@@ -332,40 +207,80 @@ def update_article_source(current_uuid, article_source):
 
 def update_images(current_uuid):
     current_user = get_current_user(current_uuid)
-    query_kwargs = {}
-
-    if app.config['APPROVED_IMAGES_ONLY'] == True:
-        query_kwargs['show_to_users'] = 't'
-
-    if current_user.current_image_source is not None:
-        query_kwargs['subreddit'] = current_user.current_image_source
-
-
-    query_kwargs['year_posted'] = 2014
-
+    month = None
     # month = np.random.random_integers(1,12)
-    # query_kwargs['month_posted'] = month
 
-    [image_1, image_2] = Post.query.filter_by(**query_kwargs).order_by(db.func.random()).limit(2).all()
+    #Insert experiment logic here
+    pic_1_filters, pic_2_filters = get_experimental_condition(current_user.current_image_source)
+
+    query_1 = Post.query.filter(Post.year_posted==2014)
+    if app.config['APPROVED_IMAGES_ONLY'] == True:
+        query_1 = query_1.filter(Post.show_to_users == 't')
+    if month is not None:
+        query_1 = query_1.filter(Post.month_posted == month)
+    if current_user.current_image_source is not None:
+        query_1 = query_1.filter(Post.subreddit == current_user.current_image_source)
+    if pic_1_filters['min_score'] is not None:
+        query_1 = query_1.filter(Post.score >= pic_1_filters['min_score'])
+    if pic_1_filters['max_score'] is not None:
+        query_1 = query_1.filter(Post.score <= pic_1_filters['max_score'])
+
+    random_offset = np.random.random_integers(0, int(query_1.count()) -1)
+    # print 'num results', int(query_1.count())
+    # print 'random offset', random_offset
+    image_1 = query_1.offset(random_offset).first()
+    # print image_1
+
+    
+    query_2 = Post.query.filter(Post.year_posted==2014)
+    if app.config['APPROVED_IMAGES_ONLY'] == True:
+        query_2 = query_2.filter(Post.show_to_users == 't')
+    if month is not None:
+        query_2 = query_2.filter(Post.month_posted == month)
+    if current_user.current_image_source is not None:
+        query_2 = query_2.filter(Post.subreddit == current_user.current_image_source)
+    if pic_2_filters['min_score'] is not None:
+        query_2 = query_2.filter(Post.score >= pic_2_filters['min_score'])
+    if pic_2_filters['max_score'] is not None:
+        query_2 = query_2.filter(Post.score <= pic_2_filters['max_score'])
+
+    query_2 = query_2.filter(Post.id != image_1.id, Post.score != image_1.score)
+    # print 'query 2 results', int(query_2.count())
+    random_offset = np.random.random_integers(0, int(query_2.count()) -1)
+    image_2 = query_2.offset(random_offset).first()
+
 
     current_user.current_image_1_id = image_1.id
     current_user.current_image_2_id = image_2.id
 
     db.session.commit()
 
-def update_images_validation(current_uuid):
-    current_user = get_current_user(current_uuid)
-    query_kwargs = {}
-    query_kwargs['hand_validated'] = None
-    query_kwargs['year_posted'] = 2014
 
-    # [image_1, image_2] = Post.query.filter(Post.hand_validated == None).order_by(db.func.random()).limit(2).all()
-    [image_1, image_2] = Post.query.filter_by(**query_kwargs).order_by(db.func.random()).limit(2).all()
+def get_experimental_condition(subreddit):
 
-    current_user.current_image_1_id = image_1.id
-    current_user.current_image_2_id = image_2.id
+    file_name = subreddit + '.json'
 
-    db.session.commit()
+    experiment_file = json.load(open('app/experiment_configurations/'+ file_name))
+    weights = []
+    for x in experiment_file['conditions']:
+        weights.append(x['weight']/100.0)
+
+    experiment_condition =  choice(np.arange(len(weights)), p=weights)
+    print 'experiment condition', experiment_condition
+    condition_1 = experiment_file['conditions'][experiment_condition]['pic_1_filter']
+    condition_2 = experiment_file['conditions'][experiment_condition]['pic_2_filter']
+
+    return condition_1, condition_2
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -394,7 +309,7 @@ def index():
     response = make_response(render_template('introduction.html'))
     
     current_uuid = get_uuid_from_cookie(request.cookies)
-    response.set_cookie(UUID_NAME, current_uuid, max_age = app.MAX_COOKIE_AGE)
+    response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
     current_user = get_current_user(current_uuid)
     update_images(current_uuid)
     return response

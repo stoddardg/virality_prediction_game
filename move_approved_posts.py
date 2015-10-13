@@ -13,6 +13,7 @@ def export_images(file_name):
     engine = create_engine('postgresql://localhost/prediction_game')
     df = pandas.read_sql_table('post', engine)
     temp = df[df.show_to_users == True]
+    temp = temp[temp.year_posted == 2014]
     temp.to_csv(file_name, index=False, encoding='utf-8')
 
 

@@ -1,0 +1,51 @@
+{ "conditions":[
+    {
+        "experiment_condition":1,
+        "weight": 25,
+        "pic_1_filter": {
+            "min_score":0,
+            "max_score":10
+        },
+        "pic_2_filter": {
+            "min_score":0,
+            "max_score":10
+        }
+    },
+    {
+        "experiment_condition":2,
+        "weight": 25,
+        "pic_1_filter": {
+            "min_score":11,
+            "max_score":10000
+        },
+        "pic_2_filter":{
+            "min_score":0,
+            "max_score":10
+        }
+    },
+    {
+        "experiment_condition":3,
+        "weight": 25,
+        "pic_1_filter": {
+            "min_score":0,
+            "max_score":10
+        },
+        "pic_2_filter":{
+            "min_score":11,
+            "max_score":10000
+        }
+    },
+    {
+        "experiment_condition":4,
+        "weight": 25,
+        "pic_1_filter": {
+            "min_score":11,
+            "max_score":10000
+        },
+        "pic_2_filter":{
+            "min_score":11,
+            "max_score":10000
+        }
+    }
+]
+}
