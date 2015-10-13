@@ -258,7 +258,10 @@ def update_images(current_uuid):
 
 def get_experimental_condition(subreddit):
 
-    file_name = subreddit + '.json'
+    if subreddit is None:
+        file_name = 'aww.json'
+    else:
+        file_name = subreddit + '.json'
 
     experiment_file = json.load(open('app/experiment_configurations/'+ file_name))
     weights = []
