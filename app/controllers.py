@@ -11,6 +11,9 @@ from forms import SurveyForm
 from app import db
 from app import app
 
+
+import pylibmc
+
 from app import MAX_COOKIE_AGE
 # import app
 predict_game = Blueprint("app",__name__)
@@ -260,18 +263,27 @@ def get_experimental_condition(subreddit):
 
     if subreddit is None:
         file_name = 'aww.json'
+        experiment_name = 'experiment_configs_aww'
     else:
         file_name = subreddit + '.json'
+        experiment_name = 'experiment_configs_' + subreddit
 
-    experiment_file = json.load(open('app/experiment_configurations/'+ file_name))
+
+    mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
+    experiment_configs = mc.get(experiment_name)
+    if experiment_configs is None:
+        experiment_configs = json.load(open('app/experiment_configurations/'+ file_name))
+
+        #update experiment config every hour
+        mc.set(experiment_name, experiment_configs, time=60*60)
+
     weights = []
-    for x in experiment_file['conditions']:
+    for x in experiment_configs['conditions']:
         weights.append(x['weight']/100.0)
 
     experiment_condition =  choice(np.arange(len(weights)), p=weights)
-    print 'experiment condition', experiment_condition
-    condition_1 = experiment_file['conditions'][experiment_condition]['pic_1_filter']
-    condition_2 = experiment_file['conditions'][experiment_condition]['pic_2_filter']
+    condition_1 = experiment_configs['conditions'][experiment_condition]['pic_1_filter']
+    condition_2 = experiment_configs['conditions'][experiment_condition]['pic_2_filter']
 
     return condition_1, condition_2
 

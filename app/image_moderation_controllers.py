@@ -123,7 +123,10 @@ def update_images_validation(current_uuid):
 
 
     # [image_1, image_2] = Post.query.filter(Post.hand_validated == None).order_by(db.func.random()).limit(2).all()
-    [image_1, image_2] = Post.query.filter_by(**query_kwargs).order_by(db.func.random()).limit(2).all()
+    query = Post.query.filter_by(**query_kwargs).order_by(db.func.random())
+    print 'remaining', int(query.count())
+
+    [image_1, image_2] = query.limit(2).all()
 
     current_user.current_image_1_id = image_1.id
     current_user.current_image_2_id = image_2.id
