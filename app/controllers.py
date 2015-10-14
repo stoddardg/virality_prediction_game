@@ -330,8 +330,16 @@ def index():
     return response
 
 
+@predict_game.route('/about')
+def about():
+    response = make_response(render_template('about.html'))
+    return response
 
 
+@predict_game.route('/reddit_description')
+def reddit_description():
+    response = make_response(render_template('reddit_description.html'))
+    return response
 
 
 
