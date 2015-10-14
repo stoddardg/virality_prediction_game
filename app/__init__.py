@@ -4,10 +4,13 @@ from flask import Flask, render_template
 # Import SQLAlchemy
 from flask.ext.sqlalchemy import SQLAlchemy
 import os
-
+from flask_analytics import Analytics
 
 # Define the WSGI application object
 app = Flask(__name__)
+Analytics(app)
+
+app.config['ANALYTICS']['GOOGLE_ANALYTICS']['ACCOUNT'] = 'UA-32402274-3'
 
 # Configurations
 app.config.from_object('config')
@@ -24,12 +27,6 @@ db.create_all()
 @app.errorhandler(404)
 def not_found(error):
     return "404 not found"
-    # return render_template('404.html'), 404
-
-
-current_image_1 = None
-current_image_2 = None
-current_picture_source = None
 
 #Length to store cookie (in seconds)
 MAX_COOKIE_AGE = 4*3600
