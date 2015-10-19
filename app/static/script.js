@@ -150,10 +150,10 @@ function grade_result(json_data)
 
     }
     
-    $("#feedback_symbol").one('load', function(){
-        $("#feedback_symbol").css('visibility', 'visible')   
-        $("#correct_percentage").html(json_data['percent_correct'])
-    })
+    // $("#feedback_symbol").one('load', function(){
+    //     $("#feedback_symbol").css('visibility', 'visible')   
+    $("#correct_percentage").html(json_data['percent_correct'])
+    // })
 
     if(json_data.show_survey == 1)
     {
