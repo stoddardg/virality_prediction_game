@@ -140,7 +140,7 @@ def start_game():
 
     percent_correct = format_correct_percentage(current_score)
 
-    response = make_response( render_template('pic_game.html', 
+    response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
         image_1_title = current_user.current_image_1.title,
