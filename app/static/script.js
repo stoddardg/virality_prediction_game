@@ -136,11 +136,17 @@ function grade_result(json_data)
         $("#feedback_symbol").attr('src','../static/200px-Checkmark_green.svg.png')
         $("#feedback_symbol").attr('width','100%')
 
+        $("#next_button").attr('class','btn btn-success')
+        $("#next_button").html("Correct!")
+
     }
     else
     {
         $("#feedback_symbol").attr('src','../static/200px-X_mark.svg.png')
         $("#feedback_symbol").attr('width','100%')
+        $("#next_button").html("Wrong!")
+        $("#next_button").attr('class','btn btn-danger')
+
 
     }
     
@@ -169,5 +175,8 @@ function disable_buttons()
 function enable_buttons()
 {
     $("#feedback_symbol").css('visibility','hidden')
+    $("#next_button").html("Next Pair")
+    $("#next_button").attr("class","btn btn-info")
+
 }
 
