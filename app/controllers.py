@@ -336,6 +336,7 @@ def about():
     return response
 
 
+
 @predict_game.route('/reddit_description')
 def reddit_description():
     response = make_response(render_template('reddit_description.html'))
