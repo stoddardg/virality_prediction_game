@@ -245,6 +245,64 @@ def update_article_source(current_uuid, article_source):
     db.session.commit()
 
 
+
+def setup_images(subreddit, current_uuid, num_questions):
+
+    score_threshold = 10 #change later by subreddit
+
+    query_1 = Post.query.filter(Post.year_posted==2014, Post.show_to_users=='t', Post.subreddit==subreddit)
+
+    low_score_images = query_1.filter(Post.score <= score_threshold).order_by(db.func.random())
+    high_score_images = query_1.filter(Post.score > score_threshold).order_by(db.func.random())
+
+    low_index = 0
+    high_index = 0
+
+    image_pairs = []
+    weights = [.25,.25,.25,.25]
+    experiment_condition =  choice(np.arange(len(weights)), p=weights)
+    for i in np.arange(num_questions):
+
+        #low low experiment 
+        if experiment_condition == 0:
+            first_image = low_score_images.offset(low_index).first()
+            low_index += 1
+            second_image = low_score_images.offset(low_index).first()
+            while first_image.score == second_image.score:
+                low_index += 1
+                second_image = low_score_images.offset(low_index).first()
+            low_index += 1
+
+        if experiment_condition == 1:
+            first_image = low_score_images.offset(low_index).first()
+            low_index += 1
+            second_image = low_score_images.offset(low_index).first()
+            while first_image.score == second_image.score:
+                low_index += 1
+                second_image = low_score_images.offset(low_index).first()
+            low_index += 1
+
+        if experiment_condition == 2:
+            first_image = high_score_images.offset(high_index).first()
+            high_index += 1
+            second_image = low_score_images.offset(low_index).first()
+            low_index += 1
+
+        if experiment_condition == 3:
+            first_image = high_score_images.offset(high_index).first()
+            high_index += 1
+            second_image = high_score_images.offset(high_index).first()
+            while first_image.score == second_image.score:
+                high_index += 1
+                second_image = high_score_images.offset(high_index).first()
+            high_index += 1
+
+        image_pairs.append([first_image, second_image])
+
+    mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
+    mc.set(current_uuid + 'images',image_pairs)
+
+
 def update_images(current_uuid):
     current_user = get_current_user(current_uuid)
     month = None
