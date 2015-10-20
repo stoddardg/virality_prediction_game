@@ -69,17 +69,22 @@ def record_vote():
 
 
     percent_correct = format_correct_percentage(current_score)
-
+    num_remaining = current_score.num_questions - (current_score.num_correct + current_score.num_wrong)
     ret_vals = {
     'status':'OK',
     'image_1_karma':image_1_score,
     'image_2_karma':image_2_score,
     'correct':user_correct,
-    'percent_correct':percent_correct
+    'num_correct':current_score.num_correct,
+    'num_wrong':current_score.num_wrong, 
+    'num_remaining':num_remaining,
+    'user_choice': user_choice
     }
 
+    print current_score.num_correct + current_score.num_wrong
+
     if current_score.num_correct + current_score.num_wrong >= 10:
-        ret_vals['show_survey'] = 1
+        ret_vals['end_of_game'] = 1
 
 
     return json.dumps(ret_vals)
@@ -97,7 +102,7 @@ def get_next_images():
 
     current_user, current_score = get_current_user_and_score(current_uuid)
     
-    if current_score.num_seen:
+    if current_score.num_seen:  
         current_score.num_seen = current_user.num_seen + 1
     else:
         current_score.num_seen = 0 
@@ -136,7 +141,13 @@ def start_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
     update_article_source(current_uuid, subreddit)
     update_images(current_uuid)
-    current_user, current_score = get_current_user_and_score(current_uuid)
+    
+
+    # current_user, current_score = get_current_user_and_score(current_uuid)
+
+    current_user = get_current_user(current_uuid)
+    current_score = make_new_score(current_user, subreddit)
+
 
     percent_correct = format_correct_percentage(current_score)
 
@@ -147,10 +158,22 @@ def start_game():
         image_1_src = current_user.current_image_1.url,
         image_2_title = current_user.current_image_2.title,
         image_2_src = current_user.current_image_2.url,
-        starting_score = percent_correct
+        num_correct = current_score.num_correct,
+        num_wrong = current_score.num_wrong,
+        num_remaining = current_score.num_questions,
+        num_questions = current_score.num_questions
         )
     )
     response.set_cookie(UUID_NAME, current_uuid)
+    return response
+
+
+@predict_game.route('/end_game')
+def end_game():
+    current_uuid = get_uuid_from_cookie(request.cookies)
+
+    current_user, current_score = get_current_user_and_score(current_uuid)
+    response = make_response(render_template('end_game_thanks.html', correct_pct=format_correct_percentage(current_score)))
     return response
 
 
@@ -172,7 +195,14 @@ def get_current_user_and_score(cookie_uuid):
         db.session.commit()    
         return new_user
     
-    current_score = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source).limit(1).first()
+
+    query = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source)
+
+    for x in query.order_by(UserScore.date_created.desc()).all():
+        print x.date_created, x.num_correct, x.num_wrong
+    current_score = query.order_by(UserScore.date_created.desc()).limit(1).first()
+
+    # current_score = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source).order_by(UserScore.date_created).limit(1).first()
     if current_score is None:
         current_score = UserScore(uuid=current_user.uuid, subreddit=current_user.current_image_source)
         db.session.add(current_score)
@@ -180,6 +210,13 @@ def get_current_user_and_score(cookie_uuid):
 
 
     return current_user, current_score
+
+def make_new_score(current_user, subreddit):
+    num_questions = 10 #eventually implement something random here
+    new_score = UserScore(uuid=current_user.uuid, subreddit=subreddit, num_questions=10)
+    db.session.add(new_score)
+    db.session.commit()
+    return new_score
 
 def format_correct_percentage(current_score):
 
@@ -211,7 +248,6 @@ def update_article_source(current_uuid, article_source):
 def update_images(current_uuid):
     current_user = get_current_user(current_uuid)
     month = None
-    # month = np.random.random_integers(1,12)
 
     #Insert experiment logic here
     pic_1_filters, pic_2_filters = get_experimental_condition(current_user.current_image_source)
@@ -229,10 +265,7 @@ def update_images(current_uuid):
         query_1 = query_1.filter(Post.score <= pic_1_filters['max_score'])
 
     random_offset = np.random.random_integers(0, int(query_1.count()) -1)
-    # print 'num results', int(query_1.count())
-    # print 'random offset', random_offset
     image_1 = query_1.offset(random_offset).first()
-    # print image_1
 
     
     query_2 = Post.query.filter(Post.year_posted==2014)
@@ -248,7 +281,6 @@ def update_images(current_uuid):
         query_2 = query_2.filter(Post.score <= pic_2_filters['max_score'])
 
     query_2 = query_2.filter(Post.id != image_1.id, Post.score != image_1.score)
-    # print 'query 2 results', int(query_2.count())
     random_offset = np.random.random_integers(0, int(query_2.count()) -1)
     image_2 = query_2.offset(random_offset).first()
 
@@ -286,17 +318,6 @@ def get_experimental_condition(subreddit):
     condition_2 = experiment_configs['conditions'][experiment_condition]['pic_2_filter']
 
     return condition_1, condition_2
-
-
-
-
-
-
-
-
-
-
-
 
 
 @predict_game.route('/survey', methods=['GET', 'POST'])

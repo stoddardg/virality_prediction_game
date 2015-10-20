@@ -71,11 +71,18 @@ class User(db.Model):
 class UserScore(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
+
+
     uuid = db.Column(db.String, index=True)
     subreddit = db.Column(db.String, index=True)
     num_correct = db.Column(db.Integer, default=0)
     num_wrong = db.Column(db.Integer, default=0)
     num_seen = db.Column(db.Integer, default=0)
+
+    num_questions = db.Column(db.Integer, default=10)
 
 
 

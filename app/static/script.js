@@ -133,35 +133,61 @@ function grade_result(json_data)
 
     if(json_result.correct == 1)
     {
-        $("#feedback_symbol").attr('src','../static/200px-Checkmark_green.svg.png')
-        $("#feedback_symbol").attr('width','100%')
-
         $("#next_button").attr('class','btn btn-success')
         $("#next_button").html("Correct!")
+        if(json_result.user_choice == 1)
+        {
+            $("#vote_button_1").attr('class','btn btn-success')
+            $("#vote_button_1").html("Correct!")
+            $("#vote_button_2").attr('class','btn btn-danger')
+            $("#vote_button_2").html("Wrong!")
+        }
+        else
+        {
+            $("#vote_button_2").attr('class','btn btn-success')
+            $("#vote_button_2").html("Correct!")
+            $("#vote_button_1").attr('class','btn btn-danger')
+            $("#vote_button_1").html("Wrong!")
+        }
 
     }
     else
     {
-        $("#feedback_symbol").attr('src','../static/200px-X_mark.svg.png')
-        $("#feedback_symbol").attr('width','100%')
         $("#next_button").html("Wrong!")
         $("#next_button").attr('class','btn btn-danger')
+        if(json_result.user_choice == 1)
+        {
+            $("#vote_button_1").attr('class','btn btn-danger')
+            $("#vote_button_1").html("Wrong!")
+        }
+        else
+        {
+            $("#vote_button_2").attr('class','btn btn-danger')
+            $("#vote_button_2").html("Wrong!")
+        }
+
 
 
     }
     
-    // $("#feedback_symbol").one('load', function(){
-    //     $("#feedback_symbol").css('visibility', 'visible')   
-    $("#correct_percentage").html(json_data['percent_correct'])
-    // })
+    $("#num_correct").html(json_data['num_correct'])
+    $("#num_wrong").html(json_data['num_wrong'])
+    $("#num_remaining").html(json_data['num_remaining'])
 
-    if(json_data.show_survey == 1)
+
+    if(json_data.end_of_game ==1 )
     {
-        $("#survey_message").css('visibility','visible')
+        setTimeout(function(){window.location.href = '/end_game';}, 1500)    
+
+    }
+    else
+    {
+        next_button_clicked = 0
+        setTimeout(click_next_button, 1500)
+
     }
 
-    next_button_clicked = 0
-    setTimeout(click_next_button, 1000)
+    
 }
 
 function disable_buttons()
@@ -175,8 +201,14 @@ function disable_buttons()
 function enable_buttons()
 {
     $("#feedback_symbol").css('visibility','hidden')
-    $("#next_button").html("Next Pair")
-    $("#next_button").attr("class","btn btn-info")
+    $("#next_button").html("Skip Pair")
+    $("#next_button").attr("class","btn btn-warning")
+    $("#vote_button_1").attr("class","btn btn-info")
+    $("#vote_button_1").html("More popular")
+    $("#vote_button_2").attr("class","btn btn-info")
+    $("#vote_button_2").html("More popular")
+
+
 
 }
 
