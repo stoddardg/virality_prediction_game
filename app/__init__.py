@@ -4,15 +4,15 @@ from flask import Flask, render_template
 # Import SQLAlchemy
 from flask.ext.sqlalchemy import SQLAlchemy
 import os
-from flask_analytics import Analytics
+# from flask_analytics import Analytics
 
 import logging
 
 # Define the WSGI application object
 app = Flask(__name__)
-Analytics(app)
+# Analytics(app)
 
-app.config['ANALYTICS']['GOOGLE_ANALYTICS']['ACCOUNT'] = 'UA-32402274-3'
+# app.config['ANALYTICS']['GOOGLE_ANALYTICS']['ACCOUNT'] = 'UA-32402274-3'
 
 # Configurations
 app.config.from_object('config')
