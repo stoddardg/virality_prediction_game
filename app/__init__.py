@@ -6,6 +6,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import os
 from flask_analytics import Analytics
 
+import logging
+
 # Define the WSGI application object
 app = Flask(__name__)
 Analytics(app)
@@ -36,3 +38,10 @@ from image_moderation_controllers import image_moderation
 
 app.register_blueprint(predict_game)
 app.register_blueprint(image_moderation)
+
+# Log only in production mode.
+
+if not app.DEBUG:
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    app.logger.addHandler(stream_handler)
