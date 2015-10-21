@@ -42,7 +42,7 @@ app.register_blueprint(image_moderation)
 # Log only in production mode.
 
 if not app.debug:
-    logHandler = logging.FileHandler('/logs/errors.log')
+    logHandler = logging.FileHandler('logs/errors.log')
     logHandler.setLevel(logging.INFO)
     app.logger.addHandler(logHandler)
     app.logger.setLevel(logging.INFO)
