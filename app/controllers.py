@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.random import choice
 
-from flask import Blueprint, render_template, request, make_response
+from flask import Blueprint, render_template, request, make_response, jsonify
 import json
 import os
 import uuid
@@ -25,11 +25,12 @@ UUID_NAME = 'guessit_uuid'
 def record_vote():
 
     current_uuid = get_uuid_from_cookie(request.cookies)
-    current_user, current_score = get_current_user_and_score(current_uuid)
+    
+    current_score = get_current_user_score(request.cookies)
     user_choice = int(request.args.get('choice'))
 
-    image_1 = current_user.current_image_1
-    image_2 = current_user.current_image_2
+
+    [image_1, image_2] = get_current_images(request.cookies)
 
     if image_1.score > image_2.score:
         correct_answer = 1
@@ -38,20 +39,21 @@ def record_vote():
     else:
         correct_answer = 0 
 
-
-
-    if current_score.num_correct is None:
-        current_score.num_correct = 0
-    if current_score.num_wrong is None:
-        current_score.num_wrong = 0
+    if current_score['num_correct'] is None:
+        current_score['num_correct'] = 0
+    if current_score['num_wrong'] is None:
+        current_score['num_wrong'] = 0
 
 
     if user_choice == correct_answer:
         user_correct = 1
-        current_score.num_correct = current_score.num_correct + 1
+        current_score['num_correct'] = current_score['num_correct'] + 1
     else:
         user_correct = 0
-        current_score.num_wrong = current_score.num_wrong + 1
+        current_score['num_wrong'] = current_score['num_wrong'] + 1
+
+    # update_current_score(current_uuid, current_score)
+
 
     new_vote = Vote(current_uuid, image_1.reddit_id, image_2.reddit_id, user_choice, correct_answer)
     db.session.add(new_vote)
@@ -69,60 +71,122 @@ def record_vote():
 
 
     percent_correct = format_correct_percentage(current_score)
-    num_remaining = current_score.num_questions - (current_score.num_correct + current_score.num_wrong)
+    num_remaining = current_score['num_questions'] - (current_score['num_correct'] + current_score['num_wrong'])
     ret_vals = {
     'status':'OK',
     'image_1_karma':image_1_score,
     'image_2_karma':image_2_score,
     'correct':user_correct,
-    'num_correct':current_score.num_correct,
-    'num_wrong':current_score.num_wrong, 
+    'num_correct':current_score['num_correct'],
+    'num_wrong':current_score['num_wrong'], 
     'num_remaining':num_remaining,
     'user_choice': user_choice
     }
 
-    print current_score.num_correct + current_score.num_wrong
+    # print current_score.num_correct + current_score.num_wrong
 
-    if current_score.num_correct + current_score.num_wrong >= 10:
+    if current_score['num_correct'] + current_score['num_wrong'] >= current_score['num_questions']:
         ret_vals['end_of_game'] = 1
 
+    print 'DUMPS'
+    print json.dumps(ret_vals)
 
-    return json.dumps(ret_vals)
+    print 'JSONIFY'
+    print jsonify(ret_vals)
 
 
-def check_valid_picture_source(subreddit):
-    accepted_sources = ['pics','aww']
-    return subreddit in accepted_sources
+    response = jsonify(ret_vals)
+    response.set_cookie('num_wrong',str(current_score['num_wrong']))
+    response.set_cookie('num_correct',str(current_score['num_correct']))
+    # response.set_cookie('num_seen',str(current_score['num_seen']))
+    # response.set_cookie('num_questions',str(current_score['num_questions']))
+
+    return response
+    # return json.dumps(ret_vals)
+
+
 
 @predict_game.route('/get_next_images', methods=['POST','GET'])
 def get_next_images():
 
     current_uuid =  get_uuid_from_cookie(request.cookies)
-    update_images(current_uuid)
 
-    current_user, current_score = get_current_user_and_score(current_uuid)
-    
-    if current_score.num_seen:  
-        current_score.num_seen = current_user.num_seen + 1
+    current_score = get_current_user_score(request.cookies)
+    # current_score = get_score(current_uuid)
+
+    if current_score['num_seen'] is not None:  
+        current_score['num_seen'] = current_score['num_seen'] + 1
     else:
-        current_score.num_seen = 0 
+        print 'IS THIS HAPPENING'
+        current_score['num_seen'] = 0
+
+    # update_current_score(current_uuid, current_score)
+    [current_image_1, current_image_2] = get_current_images(request.cookies)
+
     next_image_data = {}
 
-    next_image_data['image_1_src'] = current_user.current_image_1.url
-    next_image_data['image_1_title']  = current_user.current_image_1.title
+    next_image_data['image_1_src'] = current_image_1.url
+    next_image_data['image_1_title']  = current_image_1.title
 
-    next_image_data['image_2_src'] = current_user.current_image_2.url
-    next_image_data['image_2_title']  = current_user.current_image_2.title
+    next_image_data['image_2_src'] = current_image_2.url
+    next_image_data['image_2_title']  = current_image_2.title
     next_image_data['status'] = 'OK'
-    db.session.commit()
 
-    return json.dumps(next_image_data)
+    response = jsonify(next_image_data)
+    response.set_cookie('num_seen',str(current_score['num_seen']))
+
+    return response
+
+
+def get_current_images(cookies):
+    
+    current_score = get_current_user_score(cookies)
+    current_uuid =  get_uuid_from_cookie(cookies)
+    subreddit = get_current_subreddit(cookies)
+
+    mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
+
+
+    current_images = mc.get(current_uuid+'_images')
+    if current_images is None:
+        current_images = setup_images(current_uuid, subreddit, current_score['num_questions'])
+
+    current_question = current_score['num_seen']
+
+    if current_question >= len(current_images):
+        current_images = setup_images(current_uuid, subreddit, current_score['num_questions'])
+        print "RESIZED"
+
+    if current_question >= current_score['num_questions']:
+        current_question = current_question % current_score['num_questions']
+
+    return current_images[current_question]
+
+
+# def set_current_subreddit(current_uuid, subreddit):
+
+#     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
+#     mc.set(current_uuid+'_subreddit', subreddit, time=60*60)
+
+def get_current_subreddit(cookies):
+    sub = cookies.get('subreddit')
+    if sub is None:
+        return 'aww'
+    return sub
+
+# def get_current_subreddit(current_uuid):
+#     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
+#     current_subreddit = mc.get(current_uuid+'_subreddit')
+
+#     if current_subreddit is None:
+#         return 'aww'
+#     return current_subreddit
+
 
 
 @predict_game.route('/render_game')
 def start_game():
     subreddit = request.args.get('article_source')
-    
     if subreddit == 'aww':
         pic_source_url = "http://www.reddit.com/r/aww"
         pic_source_name = 'r/aww'
@@ -135,44 +199,44 @@ def start_game():
         pic_source_name = 'r/aww'
         subreddit = 'aww'
 
-    #We should first check that the game is actually there
-
-
     current_uuid = get_uuid_from_cookie(request.cookies)
-    update_article_source(current_uuid, subreddit)
-    update_images(current_uuid)
-    
+    # set_current_subreddit(current_uuid, subreddit)
 
-    # current_user, current_score = get_current_user_and_score(current_uuid)
+    current_score = make_new_score()
 
-    current_user = get_current_user(current_uuid)
-    current_score = make_new_score(current_user, subreddit)
+    setup_images(current_uuid, subreddit, current_score['num_questions'])
+    [current_image_1, current_image_2] = get_current_images(request.cookies)
 
-
-    percent_correct = format_correct_percentage(current_score)
 
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
-        image_1_title = current_user.current_image_1.title,
-        image_1_src = current_user.current_image_1.url,
-        image_2_title = current_user.current_image_2.title,
-        image_2_src = current_user.current_image_2.url,
-        num_correct = current_score.num_correct,
-        num_wrong = current_score.num_wrong,
-        num_remaining = current_score.num_questions,
-        num_questions = current_score.num_questions
+        image_1_title = current_image_1.title,
+        image_1_src = current_image_1.url,
+        image_2_title = current_image_2.title,
+        image_2_src = current_image_2.url,
+        num_correct = current_score['num_correct'],
+        num_wrong = current_score['num_wrong'],
+        num_remaining = current_score['num_questions'],
+        num_questions = current_score['num_questions']
         )
     )
+    
     response.set_cookie(UUID_NAME, current_uuid)
+    response.set_cookie('num_wrong',str(current_score['num_wrong']))
+    response.set_cookie('num_correct',str(current_score['num_correct']))
+    response.set_cookie('num_seen',str(current_score['num_seen']))
+    response.set_cookie('num_questions',str(current_score['num_questions']))
+    response.set_cookie('subreddit',subreddit)
+
+
     return response
 
 
 @predict_game.route('/end_game')
 def end_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
-
-    current_user, current_score = get_current_user_and_score(current_uuid)
+    current_score = get_current_user_score(request.cookies)
     response = make_response(render_template('end_game_thanks.html', correct_pct=format_correct_percentage(current_score)))
     return response
 
@@ -202,7 +266,6 @@ def get_current_user_and_score(cookie_uuid):
         print x.date_created, x.num_correct, x.num_wrong
     current_score = query.order_by(UserScore.date_created.desc()).limit(1).first()
 
-    # current_score = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source).order_by(UserScore.date_created).limit(1).first()
     if current_score is None:
         current_score = UserScore(uuid=current_user.uuid, subreddit=current_user.current_image_source)
         db.session.add(current_score)
@@ -211,21 +274,65 @@ def get_current_user_and_score(cookie_uuid):
 
     return current_user, current_score
 
-def make_new_score(current_user, subreddit):
-    num_questions = 10 #eventually implement something random here
-    new_score = UserScore(uuid=current_user.uuid, subreddit=subreddit, num_questions=10)
-    db.session.add(new_score)
-    db.session.commit()
-    return new_score
+
+def make_new_score():
+    num_questions = 10 # randomize this later
+    score_dict = {
+    'num_questions':num_questions,
+    'num_correct':0,
+    'num_wrong':0,
+    'num_seen':1
+    }
+    return score_dict
+
+def get_current_user_score(cookies):
+    num_correct = cookies.get('num_correct')
+    num_seen = cookies.get('num_seen')
+    num_wrong = cookies.get('num_wrong')
+    num_questions = cookies.get('num_questions')
+
+    if num_correct is None:
+        return make_new_score()
+    if num_seen is None:
+        return make_new_score()
+    if num_wrong is None:
+        return make_new_score()
+    if num_questions is None:
+        return make_new_score()
+
+
+    score_dict = {
+    'num_correct':int(num_correct),
+    'num_seen':int(num_seen),
+    'num_wrong':int(num_wrong),
+    'num_questions':int(num_questions)
+    }
+
+    return score_dict
+
+# def make_new_score(current_uuid):
+#     num_questions = 10 #eventually implement something random here
+#     subreddit = get_current_subreddit(current_uuid)
+#     new_score = UserScore(uuid=current_uuid, subreddit=subreddit, num_questions=10, num_seen=0)
+    
+#     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
+
+#     #persist for 10 minutes
+#     mc.set(current_uuid + '_score', new_score, time=10*60)
+
+#     return new_score
+    # db.session.add(new_score)
+    # db.session.commit()
+    # return new_score
 
 def format_correct_percentage(current_score):
 
-    num_answered = current_score.num_correct + current_score.num_wrong
+    num_answered = current_score['num_correct'] + current_score['num_wrong']
     if num_answered == 0:
         return '--'
         # return 100
 
-    percent_correct = current_score.num_correct / (1.0*num_answered)
+    percent_correct = current_score['num_correct'] / (1.0*num_answered)
     percent_correct *= 100
     percent_correct = int(percent_correct)
     return percent_correct
@@ -234,7 +341,7 @@ def get_uuid_from_cookie(cookie):
     if (UUID_NAME in cookie.keys()) == False:
         user_id = str(uuid.uuid4())
     else:
-        user_id = request.cookies.get(UUID_NAME)
+        user_id = cookie.get(UUID_NAME)
     return user_id
 
 
@@ -246,8 +353,9 @@ def update_article_source(current_uuid, article_source):
 
 
 
-def setup_images(subreddit, current_uuid, num_questions):
+def setup_images(current_uuid, subreddit, num_questions):
 
+    # subreddit = get_current_subreddit(current_uuid)
     score_threshold = 10 #change later by subreddit
 
     query_1 = Post.query.filter(Post.year_posted==2014, Post.show_to_users=='t', Post.subreddit==subreddit)
@@ -300,8 +408,9 @@ def setup_images(subreddit, current_uuid, num_questions):
         image_pairs.append([first_image, second_image])
 
     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
-    mc.set(current_uuid + 'images',image_pairs)
+    mc.set(current_uuid + '_images',image_pairs, time=10*60)
 
+    return image_pairs
 
 def update_images(current_uuid):
     current_user = get_current_user(current_uuid)

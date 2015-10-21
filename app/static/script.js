@@ -22,13 +22,12 @@ $(function() {
             url: '/record_vote',
             data: {choice : 1},
             success: function(data ) {
-                json_result = jQuery.parseJSON(data);
-                $("#image_1_score").html(json_result.image_1_karma);
-                $("#image_2_score").html(json_result.image_2_karma);
+                $("#image_1_score").html(data.image_1_karma);
+                $("#image_2_score").html(data.image_2_karma);
                 $("#image_1_score").css('visibility', 'visible');
                 $("#image_2_score").css('visibility', 'visible');
                 disable_buttons();
-                grade_result(json_result);
+                grade_result(data);
               
             }
         });
@@ -42,13 +41,12 @@ $(function() {
             url: '/record_vote',
             data: {choice : 2},
             success: function(data ) {
-                json_result = jQuery.parseJSON(data);
-                $("#image_1_score").html(json_result.image_1_karma);
-                $("#image_2_score").html(json_result.image_2_karma);
+                $("#image_1_score").html(data.image_1_karma);
+                $("#image_2_score").html(data.image_2_karma);
                 $("#image_1_score").css('visibility', 'visible');
                 $("#image_2_score").css('visibility', 'visible');
                disable_buttons()
-               grade_result(json_result);
+               grade_result(data);
 
               
             }
@@ -79,9 +77,9 @@ $(function() {
 });
 
 
-function update_images(data)
+function update_images(json_result)
 {
-    json_result = jQuery.parseJSON(data);
+    // json_result = jQuery.parseJSON(data);
 
     $("#image_1").attr('src',json_result.image_1_src)
     $("#image_1").on('load', function(){
@@ -130,12 +128,13 @@ function click_next_button(){
 
 function grade_result(json_data)
 {
+    console.log(json_data)
 
-    if(json_result.correct == 1)
+    if(json_data.correct == 1)
     {
         $("#next_button").attr('class','btn btn-success')
         $("#next_button").html("Correct!")
-        if(json_result.user_choice == 1)
+        if(json_data.user_choice == 1)
         {
             $("#vote_button_1").attr('class','btn btn-success')
             $("#vote_button_1").html("Correct!")
@@ -155,7 +154,7 @@ function grade_result(json_data)
     {
         $("#next_button").html("Wrong!")
         $("#next_button").attr('class','btn btn-danger')
-        if(json_result.user_choice == 1)
+        if(json_data.user_choice == 1)
         {
             $("#vote_button_1").attr('class','btn btn-danger')
             $("#vote_button_1").html("Wrong!")
