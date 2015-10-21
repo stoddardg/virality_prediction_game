@@ -9345,6 +9345,11 @@ return jQuery;
       self.end();
       return false;
     });
+
+    this.$lightbox.find('.lb-nav').on('click', function() {
+      self.end();
+      return false;
+    });
   };
 
   // Show overlay and lightbox. If the image is part of a set, add siblings to album array.
