@@ -97,7 +97,7 @@ function update_images(json_result)
         $("#vote_button_2").prop('disabled', false);
 
     })
-    enable_buttons()
+    enable_buttons(json_result)
 }
 
 function update_images_validation(data)
@@ -171,7 +171,7 @@ function grade_result(json_data)
     
     $("#num_correct").html(json_data['num_correct'])
     $("#num_wrong").html(json_data['num_wrong'])
-    $("#num_remaining").html(json_data['num_remaining'])
+    // $("#num_remaining").html(json_data['num_remaining'])
 
 
     if(json_data.end_of_game ==1 )
@@ -197,7 +197,7 @@ function disable_buttons()
 
 }
 
-function enable_buttons()
+function enable_buttons(json_data)
 {
     $("#feedback_symbol").css('visibility','hidden')
     $("#next_button").html("Skip Pair")
@@ -207,6 +207,9 @@ function enable_buttons()
     $("#vote_button_2").attr("class","btn btn-info")
     $("#vote_button_2").html("More popular")
 
+     console.log(json_data)
+
+    $("#num_remaining").html(json_data['num_remaining'])
 
 
 }

@@ -114,12 +114,8 @@ def get_next_images():
     current_score = get_current_user_score(request.cookies)
     # current_score = get_score(current_uuid)
 
-    if current_score['num_seen'] is not None:  
-        current_score['num_seen'] = current_score['num_seen'] + 1
-    else:
-        print 'IS THIS HAPPENING'
-        current_score['num_seen'] = 0
-
+    current_score['num_seen'] = current_score['num_seen'] + 1
+    
     # update_current_score(current_uuid, current_score)
     [current_image_1, current_image_2] = get_current_images(request.cookies)
 
@@ -132,13 +128,18 @@ def get_next_images():
     next_image_data['image_2_title']  = current_image_2.title
     next_image_data['status'] = 'OK'
 
-    response = jsonify(next_image_data)
-    response.set_cookie('num_seen',str(current_score['num_seen']))
+    num_remaining = current_score['num_questions'] - (current_score['num_correct'] + current_score['num_wrong'])
+    next_image_data['num_remaining'] = num_remaining
 
+    response = jsonify(next_image_data)
+
+
+    response.set_cookie('num_seen',str(current_score['num_seen']))
+    # response.set_cookie('num_remaining',str(num_remaining))
     return response
 
 
-def get_current_images(cookies):
+def get_current_images(cookies, current_question=None):
     
     current_score = get_current_user_score(cookies)
     current_uuid =  get_uuid_from_cookie(cookies)
@@ -151,7 +152,8 @@ def get_current_images(cookies):
     if current_images is None:
         current_images = setup_images(current_uuid, subreddit, current_score['num_questions'])
 
-    current_question = current_score['num_seen']
+    if current_question is None:
+        current_question = current_score['num_seen']
 
     if current_question >= len(current_images):
         current_images = setup_images(current_uuid, subreddit, current_score['num_questions'])
@@ -205,7 +207,7 @@ def start_game():
     current_score = make_new_score()
 
     setup_images(current_uuid, subreddit, current_score['num_questions'])
-    [current_image_1, current_image_2] = get_current_images(request.cookies)
+    [current_image_1, current_image_2] = get_current_images(request.cookies, current_question=0)
 
 
     response = make_response( render_template('pic_game_mobile.html', 
