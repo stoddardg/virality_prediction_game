@@ -1,12 +1,12 @@
 {% extends "template.html" %}
 
 {% block intro_text %}
-<p>You have completed the game. Your score is <b>{{correct_pct}}%</b>. 
+<p style="font-size:150%">Thanks for playing! You guessed <b>{{correct_pct}}%</b> of pairs correctly. 
 Check the chart below to see how you did relative to other players.</p>
 
-<p> Please remember to take the survey. Or use the menu below to play again </p>
+<p style="font-size:150%"> Please remember to take the survey. Or use the menu above to choose another subreddit and play again.</p>
 
-<div class="btn-group">
+<!-- <div class="btn-group">
     <button type="button" class="btn btn-default btn-large dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Play again <span class="caret"></span>
     </button>
@@ -16,12 +16,7 @@ Check the chart below to see how you did relative to other players.</p>
     </ul>
 </div>
 
-<div class="col-sm-6" id='survey_message'>
-  <!-- <span  > <p> When you are done, please fill out the survey.  </p> -->
-    <div class = "btn-group">
-      <a href="/survey" class="btn btn-default btn-large" role="button">Take Survey</a>
-    </div>
-  </div>
+
 {% endblock %}
 
 {% block content %}

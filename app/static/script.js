@@ -124,9 +124,10 @@ function update_images(json_result)
         $("#image_2_title").html(json_result.image_2_title)
         $("#image_2_caption").css('visibility', 'hidden')
         $("#vote_button_2").prop('disabled', false);
+        enable_buttons(json_result)
 
     })
-    enable_buttons(json_result)
+    // enable_buttons(json_result)
 }
 
 function update_images_validation(data)
@@ -236,7 +237,6 @@ function enable_buttons(json_data)
     $("#vote_button_2").attr("class","btn btn-info")
     $("#vote_button_2").html("More popular")
 
-     console.log(json_data)
 
     $("#num_remaining").html(json_data['num_remaining'])
 
