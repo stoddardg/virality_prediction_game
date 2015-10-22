@@ -35,6 +35,7 @@
     <![endif]-->    
   </head>
 
+<body>
   <div class="container">
 
       <!-- Static navbar -->
@@ -57,27 +58,22 @@
               
             </ul>
             
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
+          </div>
+        </div>
       </nav>
 
       <!-- Main component for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <div class='container'>
-          <h1>Guess the Karma</h1>
-          <br>
-          {% block intro_text %}
-         <!--  <p>Here are two images that were both posted to <a href='http://www.reddit.com/r/aww'> r/aww</a>. See if you can guess which one was voted cuter. After you vote, you will see which was liked better by the reddit community. </p> -->
-          {%endblock %}
+      <div class="page-header" >
+<!--         <div class='jumbotron'>
+ -->          {% block intro_text %}  {%endblock %}
         </div>
-      </div>
-
+      <!-- </div> -->
       {% block content %}{% endblock %}
 
 
 
-      
-    </div> <!-- /container -->
+      </div>
+  </div> <!-- /container -->
 
 <div class="navbar navbar-fixed-bottom"></div>
    <footer class="footer">
