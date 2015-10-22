@@ -151,7 +151,13 @@ function update_images_validation(data)
 function click_next_button(){
     if(next_button_clicked == 0)
     {    
-        $("#next_button").click()
+        // $("#next_button").click()
+      
+        next_button_clicked = 1
+        $.ajax({
+            url: '/get_next_images',
+            success: update_images
+        })
         next_button_clicked = 1
     }
 }
