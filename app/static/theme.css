@@ -1,20 +1,8 @@
-.bar rect {
-  fill: steelblue;
-  shape-rendering: crispEdges;
+@media (max-width: : 500px) {
+    .image_title{
+      font-size: 100%;
+    }
 }
-
-.bar text {
-  fill: #fff;
-}
-
-.axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-
-
 
 
 body {
@@ -47,7 +35,7 @@ background-color: rgb(0, 0, 0);
 }
 
 .well-correct{
-background-color: #b29d85;;
+background-color: #b29d85;
 }
 
 .well-wrong{
@@ -58,35 +46,23 @@ background-color: rgb(22, 105, 173);
   font-size:200%;
   font-weight: bold;
 }
-
-@media (max-width: @screen-xs) {
-    .image_title {font-size: 100%;}
+.text-center{
+  font-size:250%;
+  font-weight:bold;
 }
 
-
-
-@media(max-width:767px){}
-@media(min-width:768px){}
-@media(min-width:992px){}
-@media(min-width:1200px){}
-
-
-/*.progress {
-    height: 40px;
-    font-size: 30px;
+@media screen and (max-width: 480px) {
+    .image_title{
+      font-size:100%;
+    }
+    .text-center{
+      font-size:150%;
+    }
 }
-.bar {
-    font-size: 30px;
-    line-height: 40px;
+  
+/*@media screen and (min-width: 300px) {
+    .image_title {
+        font-size: 60px;
+    }
 }
 */
-/*.progress {
-height: 38px;
-}
-
-.progress span {
-    font-size: 2em;
-    text-align: center;
-    vertical-align: middle;
-    width: 100%;
-}*/
