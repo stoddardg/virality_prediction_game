@@ -98,11 +98,8 @@ def record_vote():
     response = jsonify(ret_vals)
     response.set_cookie('num_wrong',str(current_score['num_wrong']))
     response.set_cookie('num_correct',str(current_score['num_correct']))
-    # response.set_cookie('num_seen',str(current_score['num_seen']))
-    # response.set_cookie('num_questions',str(current_score['num_questions']))
 
     return response
-    # return json.dumps(ret_vals)
 
 
 
@@ -135,7 +132,6 @@ def get_next_images():
 
 
     response.set_cookie('num_seen',str(current_score['num_seen']))
-    # response.set_cookie('num_remaining',str(num_remaining))
     return response
 
 
@@ -239,9 +235,56 @@ def start_game():
 def end_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
     current_score = get_current_user_score(request.cookies)
-    response = make_response(render_template('end_game_thanks.html', correct_pct=format_correct_percentage(current_score)))
+    current_subreddit = get_current_subreddit(request.cookies)
+
+    new_score = UserScore(uuid=current_uuid,
+        subreddit=current_subreddit,
+        num_correct = current_score['num_correct'],
+        num_wrong=current_score['num_wrong'],
+        num_questions=current_score['num_questions'],
+        num_seen=current_score['num_seen']
+        )
+    db.session.add(new_score)
+    db.session.commit()
+
+    values = get_score_distributions(current_subreddit)
+
+    if current_score['num_correct'] + current_score['num_wrong'] == 0:
+        current_pct = 0
+    else:
+        current_pct = (current_score['num_correct']*1.0) / (current_score['num_correct'] + current_score['num_wrong'])
+    current_pct *= 100
+
+    current_bin = current_pct // 10
+    current_bin += .25
+    # current_bin += current_pct % 10
+
+    response = make_response(render_template('end_game_thanks.html', 
+        correct_pct=format_correct_percentage(current_score), score_dist=values, user_bin=current_bin ))
     return response
 
+
+def get_score_distributions(subreddit):
+    query = UserScore.query.filter_by(subreddit=subreddit)
+
+    all_scores = []
+
+    for x in query.all():
+        if x.num_correct + x.num_wrong == 0:
+            continue
+        else:
+            pct_correct = (x.num_correct*1.0) / (x.num_correct + x.num_wrong)
+        pct_correct *= 100
+        all_scores.append(pct_correct)
+
+    print all_scores
+    hist, bin_edges = np.histogram(all_scores, bins=[-1,10,20,30,40,50,60,70,80,90,101], density=False)
+    hist = np.multiply(hist, 1.0)
+    hist /= np.sum(hist)
+
+    print 'sum is', np.sum(hist)
+    print 'bin_edges',bin_edges
+    return list(hist)
 
 def get_current_user(cookie_uuid, subreddit=None):
     current_user = User.query.get(cookie_uuid)
