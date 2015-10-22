@@ -247,7 +247,7 @@ def end_game():
     db.session.add(new_score)
     db.session.commit()
 
-    num_bins = 20
+    num_bins = 10
     values = get_score_distributions(current_subreddit, num_bins)
 
     if current_score['num_correct'] + current_score['num_wrong'] == 0:
@@ -256,16 +256,18 @@ def end_game():
         current_pct = (current_score['num_correct']*1.0) / (current_score['num_correct'] + current_score['num_wrong'])
     current_pct *= 100
 
-    current_bin = current_pct // num_bins
-    # current_bin += .25
-    # current_bin += current_pct % 10
+    bin_size = 100/num_bins
 
     user_val = np.max(values)
     user_val *= 1.1
 
 
     response = make_response(render_template('end_game_thanks.html', 
-        correct_pct=format_correct_percentage(current_score), score_dist=values, user_bin=current_bin, user_val = user_val ))
+        correct_pct=format_correct_percentage(current_score), 
+        score_dist=values, 
+        user_score=current_pct, 
+        user_val = user_val , 
+        bin_size=bin_size))
     return response
 
 

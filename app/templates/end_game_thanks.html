@@ -68,7 +68,7 @@ Check the chart below to see how you did relative to other players.</p>
                 borderWidth: 0,
                 grouping:false,
                 starting_point:0,
-                pointInterval:5,
+                pointInterval: {{ bin_size }},
                 // pointPlacement:"between",
                 // groupPadding:0,
                 // pointWidth: 40
@@ -87,7 +87,7 @@ Check the chart below to see how you did relative to other players.</p>
             // groupPadding:0
         },
         {
-            data: [[ {{ user_bin }} , {{ user_val }}]],
+            data: [[ {{ user_score }} , {{ user_val }}]],
             // data: [[ 65, {{user_val }}]],
             color:"blue",
             name: "You",
