@@ -259,8 +259,12 @@ def end_game():
     current_bin += .25
     # current_bin += current_pct % 10
 
+    user_val = np.max(values)
+    user_val *= 1.1
+
+
     response = make_response(render_template('end_game_thanks.html', 
-        correct_pct=format_correct_percentage(current_score), score_dist=values, user_bin=current_bin ))
+        correct_pct=format_correct_percentage(current_score), score_dist=values, user_bin=current_bin, user_val = user_val ))
     return response
 
 
@@ -278,7 +282,7 @@ def get_score_distributions(subreddit):
         all_scores.append(pct_correct)
 
     print all_scores
-    hist, bin_edges = np.histogram(all_scores, bins=[-1,10,20,30,40,50,60,70,80,90,101], density=False)
+    hist, bin_edges = np.histogram(all_scores, bins=5*np.arange(20), density=False)
     hist = np.multiply(hist, 1.0)
     hist /= np.sum(hist)
 
