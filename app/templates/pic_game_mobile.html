@@ -7,19 +7,23 @@
 
 
 <h3>These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}}</a>. Which was more popular? </h3>
+<!-- <p style="font-size:250%"> <span id="num_remaining" >{{num_remaining}}</span> pairs remaining. <p> -->
 
 
-<!-- 
+
+<div class='row'>
+    <div class="col-xs-6">
+      <p style="font-size:250%"> <span id="num_remaining" >{{num_remaining}}</span> pairs remaining. <p>
+    </div>
+</div>
 <div class='row'>
     <div class="col-xs-3">
       <div class="btn-group-vertical btn-block ">
       <button type="button" id="next_button" class="btn btn-warning " > Skip Pair </button>
       </div>
     </div>
-    <div class="col-xs-3">
-      <h4> Pairs Remaining: <span id="num_remaining">{{num_remaining}} </span> </h4>
-    </div>
-</div> -->
+
+</div>
 
 <!-- Guess which one received a higher karma score. After voting on all {{num_questions}} pairs, you will see your final score. If you aren't sure, or something is wrong with a photo, just hit 'Skip Pair'. New images will autoload after voting.   </p> -->
 
@@ -70,7 +74,7 @@
       </div>
       <div class="caption">
             <h2>Title: 
-            <h4><span id="image_1_title">  {{image_1_title}} </span></h4>
+            <span id="image_1_title">  {{image_1_title}} </span>
             </h2>
       </div>
       
@@ -89,7 +93,7 @@
         </div>
         <div class="caption">
           <h2>Title: 
-          <h4><span id="image_2_title"> {{image_2_title}} </span></h4>
+          <span id="image_2_title"> {{image_2_title}} </span>
           </h2>
         </div>
         <a id='image_2_link' data-lightbox="image-2" href={{image_2_src}}>   
