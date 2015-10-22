@@ -247,7 +247,8 @@ def end_game():
     db.session.add(new_score)
     db.session.commit()
 
-    values = get_score_distributions(current_subreddit)
+    num_bins = 20
+    values = get_score_distributions(current_subreddit, num_bins)
 
     if current_score['num_correct'] + current_score['num_wrong'] == 0:
         current_pct = 0
@@ -255,8 +256,8 @@ def end_game():
         current_pct = (current_score['num_correct']*1.0) / (current_score['num_correct'] + current_score['num_wrong'])
     current_pct *= 100
 
-    current_bin = current_pct // 10
-    current_bin += .25
+    current_bin = current_pct // num_bins
+    # current_bin += .25
     # current_bin += current_pct % 10
 
     user_val = np.max(values)
@@ -268,7 +269,7 @@ def end_game():
     return response
 
 
-def get_score_distributions(subreddit):
+def get_score_distributions(subreddit, num_bins):
     query = UserScore.query.filter_by(subreddit=subreddit)
 
     all_scores = []
@@ -282,7 +283,10 @@ def get_score_distributions(subreddit):
         all_scores.append(pct_correct)
 
     print all_scores
-    hist, bin_edges = np.histogram(all_scores, bins=5*np.arange(20), density=False)
+
+    bin_size = 100/num_bins
+
+    hist, bin_edges = np.histogram(all_scores, bins=bin_size*np.arange(num_bins), density=False)
     hist = np.multiply(hist, 1.0)
     hist /= np.sum(hist)
 
