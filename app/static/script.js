@@ -53,8 +53,8 @@ $(function() {
             success: function(data ) {
                 $("#image_1_score").html(data.image_1_karma);
                 $("#image_2_score").html(data.image_2_karma);
-                $("#image_1_score").css('visibility', 'visible');
-                $("#image_2_score").css('visibility', 'visible');
+                $("#image_1_caption").css('visibility', 'visible');
+                $("#image_2_caption").css('visibility', 'visible');
                 disable_buttons();
                 grade_result(data);
               
@@ -72,8 +72,8 @@ $(function() {
             success: function(data ) {
                 $("#image_1_score").html(data.image_1_karma);
                 $("#image_2_score").html(data.image_2_karma);
-                $("#image_1_score").css('visibility', 'visible');
-                $("#image_2_score").css('visibility', 'visible');
+                $("#image_1_caption").css('visibility', 'visible');
+                $("#image_2_caption").css('visibility', 'visible');
                disable_buttons()
                grade_result(data);
 
@@ -114,7 +114,7 @@ function update_images(json_result)
     $("#image_1").on('load', function(){
         $("#image_1_link").attr('href', json_result.image_1_src)
         $("#image_1_title").html(json_result.image_1_title)
-        $("#image_1_score").css('visibility', 'hidden')
+        $("#image_1_caption").css('visibility', 'hidden')
         $("#vote_button_1").prop('disabled', false);
 
     })
@@ -122,7 +122,7 @@ function update_images(json_result)
     $("#image_2").on('load',function(){
         $("#image_2_link").attr('href', json_result.image_2_src)
         $("#image_2_title").html(json_result.image_2_title)
-        $("#image_2_score").css('visibility', 'hidden')
+        $("#image_2_caption").css('visibility', 'hidden')
         $("#vote_button_2").prop('disabled', false);
 
     })
