@@ -192,6 +192,13 @@ def start_game():
         pic_source_url = "http://www.reddit.com/r/pics"
         pic_source_name = 'r/pics'
 
+    if subreddit == 'OldSchoolCool':
+        pic_source_url = "https://www.reddit.com/r/oldschoolcool"
+        pic_source_name = 'r/oldschoolcool'
+
+
+
+
     if subreddit is None:
         pic_source_url = "http://www.reddit.com/r/aww"
         pic_source_name = 'r/aww'
@@ -364,21 +371,6 @@ def get_current_user_score(cookies):
     }
 
     return score_dict
-
-# def make_new_score(current_uuid):
-#     num_questions = 10 #eventually implement something random here
-#     subreddit = get_current_subreddit(current_uuid)
-#     new_score = UserScore(uuid=current_uuid, subreddit=subreddit, num_questions=10, num_seen=0)
-    
-#     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
-
-#     #persist for 10 minutes
-#     mc.set(current_uuid + '_score', new_score, time=10*60)
-
-#     return new_score
-    # db.session.add(new_score)
-    # db.session.commit()
-    # return new_score
 
 def format_correct_percentage(current_score):
 
@@ -568,8 +560,8 @@ def index():
     
     current_uuid = get_uuid_from_cookie(request.cookies)
     response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
-    current_user = get_current_user(current_uuid)
-    update_images(current_uuid)
+    # current_user = get_current_user(current_uuid)
+    # update_images(current_uuid)
     return response
 
 

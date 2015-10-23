@@ -51,6 +51,11 @@ background-color: rgb(22, 105, 173);
   font-weight:bold;
 }
 
+.about-text{
+  font-size:125%;
+}
+
+
 @media screen and (max-width: 480px) {
     .image_title{
       font-size:100%;
