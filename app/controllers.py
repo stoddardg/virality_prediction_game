@@ -274,7 +274,8 @@ def end_game():
         score_dist=values, 
         user_score=current_pct, 
         user_val = user_val , 
-        bin_size=bin_size))
+        bin_size=bin_size,
+        subreddit=current_subreddit))
     return response
 
 

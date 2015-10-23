@@ -6,28 +6,6 @@ Check the chart below to see how you did relative to other players.</p>
 
 <p style="font-size:150%"> Please remember to take the survey. Or use the menu above to choose another subreddit and play again.</p>
 
-<!-- <div class="btn-group">
-    <button type="button" class="btn btn-default btn-large dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Play again <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-      <li><a href="/render_game?article_source=aww">Aww</a></li>
-      <li><a href="/render_game?article_source=pics">Pics</a></li>
-    </ul>
-</div>
-
-
-{% endblock %}
-
-{% block content %}
-<div class="container">
-    <div class='col-xs-12' id="histogram_container"></div>
-</div>
-
-<!-- <script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/modules/exporting.js"></script> -->
-
-
 <script>
     
     $(function () {
@@ -39,7 +17,7 @@ Check the chart below to see how you did relative to other players.</p>
             enabled: false
         },
         title: {
-            text: 'Scores for r/aww'
+            text: 'Scores for ' + '{{ subreddit }}'
         },
          xAxis: {
             min:0,
