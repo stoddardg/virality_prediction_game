@@ -9,19 +9,18 @@ Please fill out the survey below about your use of Reddit. If you have any other
 {% block content %}
   <h1>Reddit Use</h1>
   <form action="" method="post" name="survey">
-<!--       {{ form.hidden_tag() }}
- -->      
-      <p>How often do you visit Reddit? {{ form.use_frequency }}</p>
+      <p class='survey-text'>How often do you visit Reddit? {{ form.use_frequency }}</p>
 
-      <p> Describe your use Reddit. Check all that apply <p>
-      {{form.type_of_use}}
-
-
-      <p>How long have you used Reddit? 
+      <p class='survey-text' >How long have you used Reddit? 
       <!-- <div class='row'> -->
       {{ form.length_of_use }}</p>
       <!-- </div> -->
-      <p><input type="submit" value="Submit Survey"></p>
+      <p class='survey-text'> Describe your use Reddit. Check all that apply <p>
+      {{form.type_of_use}}
+
+
+
+      <p class='survey-text'><input type="submit" value="Submit Survey"></p>
 
 
   </form>

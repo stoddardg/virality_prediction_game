@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.random import choice
 
-from flask import Blueprint, render_template, request, make_response, jsonify
+from flask import Blueprint, render_template, request, make_response, jsonify,url_for, redirect
 import json
 import os
 import uuid
@@ -161,52 +161,21 @@ def get_current_images(cookies, current_question=None):
     return current_images[current_question]
 
 
-# def set_current_subreddit(current_uuid, subreddit):
-
-#     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
-#     mc.set(current_uuid+'_subreddit', subreddit, time=60*60)
-
 def get_current_subreddit(cookies):
     sub = cookies.get('subreddit')
     if sub is None:
         return 'aww'
     return sub
 
-# def get_current_subreddit(current_uuid):
-#     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
-#     current_subreddit = mc.get(current_uuid+'_subreddit')
-
-#     if current_subreddit is None:
-#         return 'aww'
-#     return current_subreddit
-
 
 
 @predict_game.route('/render_game')
 def start_game():
-    subreddit = request.args.get('article_source')
-    if subreddit == 'aww':
-        pic_source_url = "http://www.reddit.com/r/aww"
-        pic_source_name = 'r/aww'
-    if subreddit == 'pics':
-        pic_source_url = "http://www.reddit.com/r/pics"
-        pic_source_name = 'r/pics'
+    sub_param = request.args.get('article_source')
+    [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
-    if subreddit == 'OldSchoolCool':
-        pic_source_url = "https://www.reddit.com/r/oldschoolcool"
-        pic_source_name = 'r/oldschoolcool'
-
-
-
-
-    if subreddit is None:
-        pic_source_url = "http://www.reddit.com/r/aww"
-        pic_source_name = 'r/aww'
-        subreddit = 'aww'
 
     current_uuid = get_uuid_from_cookie(request.cookies)
-    # set_current_subreddit(current_uuid, subreddit)
-
     current_score = make_new_score()
 
     setup_images(current_uuid, subreddit, current_score['num_questions'])
@@ -243,7 +212,7 @@ def end_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
     current_score = get_current_user_score(request.cookies)
     current_subreddit = get_current_subreddit(request.cookies)
-
+    
     new_score = UserScore(uuid=current_uuid,
         subreddit=current_subreddit,
         num_correct = current_score['num_correct'],
@@ -269,6 +238,7 @@ def end_game():
     user_val *= 1.1
 
 
+
     response = make_response(render_template('end_game_thanks.html', 
         correct_pct=format_correct_percentage(current_score), 
         score_dist=values, 
@@ -276,6 +246,8 @@ def end_game():
         user_val = user_val , 
         bin_size=bin_size,
         subreddit=current_subreddit))
+
+    print response
     return response
 
 
@@ -555,14 +527,35 @@ def login():
                                form=form)
 
 
+
+def get_subreddit_info(subreddit=None):
+    subreddits = ['pics','aww','OldSchoolCool']
+
+    if subreddit == 'aww':
+        pic_source_url = "http://www.reddit.com/r/aww"
+        # pic_source_name = 'r/aww'
+        pic_source_name = "reddit.com/r/aww"
+    elif subreddit == 'pics':
+        pic_source_url = "http://www.reddit.com/r/pics"
+        pic_source_name = 'reddit.com/r/pics'
+    elif subreddit == 'OldSchoolCool':
+        pic_source_url = "https://www.reddit.com/r/oldschoolcool"
+        pic_source_name = 'reddit.com/r/oldschoolcool'
+    else:
+        random_sub = choice(subreddits)
+
+        return get_subreddit_info(subreddit=random_sub)
+
+
+
+    return [subreddit, pic_source_url, pic_source_name]
+
+
 @predict_game.route('/')
 def index():
-    response = make_response(render_template('introduction.html'))
-    
+    response = redirect(url_for('.start_game'))
     current_uuid = get_uuid_from_cookie(request.cookies)
     response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
-    # current_user = get_current_user(current_uuid)
-    # update_images(current_uuid)
     return response
 
 

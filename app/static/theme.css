@@ -52,7 +52,11 @@ background-color: rgb(22, 105, 173);
 }
 
 .about-text{
-  font-size:125%;
+  font-size:150%;
+}
+
+.instruction-text{
+  font-size:150%;
 }
 
 .menu-links{
@@ -60,6 +64,10 @@ background-color: rgb(22, 105, 173);
 }
 
 .nav-links{
+  font-size:150%;
+}
+
+.survey-text{
   font-size:150%;
 }
 
@@ -71,10 +79,4 @@ background-color: rgb(22, 105, 173);
       font-size:150%;
     }
 }
-  
-/*@media screen and (min-width: 300px) {
-    .image_title {
-        font-size: 60px;
-    }
-}
-*/
+

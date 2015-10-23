@@ -5,10 +5,18 @@
 Check the chart below to see how you did relative to other players.</p>
 
 <p style="font-size:150%"> Please remember to take the survey. Or use the menu above to choose another subreddit and play again.</p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class='col-xs-12' id="histogram_container"></div>
+</div>
 
 <script>
     
     $(function () {
+    console.log("YO")
+    console.log( {{score_dist}})
     $('#histogram_container').highcharts({
         chart: {
             type: 'column'
