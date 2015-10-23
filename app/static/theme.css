@@ -75,6 +75,17 @@ background-color: rgb(22, 105, 173);
   position: static;
 }
 
+.subreddit-text{
+  text-align:center;
+  font-weight:bold;
+  font-size:250%
+}
+
+.more-popular-text{
+  text-align:center;
+  font-weight:bold; 
+  font-size:300%
+}
 
 @media screen and (max-width: 480px) {
     .image_title{
@@ -82,6 +93,12 @@ background-color: rgb(22, 105, 173);
     }
     .text-center{
       font-size:150%;
+    }
+    .subreddit-text{
+      font-size:150%;
+    }
+    .more-popular-text{
+      font-size:200%;
     }
 }
 
