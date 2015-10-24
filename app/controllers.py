@@ -373,59 +373,53 @@ def update_article_source(current_uuid, article_source):
 
 
 
+def get_thresholds(current_subreddit):
+
+    if current_subreddit == 'aww':
+        thresholds = [ (0,10),(11,1000000)]
+        return thresholds
+
+    if current_subreddit == 'pics':
+        thresholds = [ (0,10),(11,1000000)]
+        return thresholds
+
+    if current_subreddit == 'OldSchoolCool':
+        thresholds = [ (0,10),(11,1000000)]
+        return thresholds
+
+
+
+
 def setup_images(current_uuid, subreddit, num_questions):
 
-    # subreddit = get_current_subreddit(current_uuid)
-    score_threshold = 10 #change later by subreddit
+    thresholds = get_thresholds(subreddit)
+
+    image_classes = []
 
     query_1 = Post.query.filter(Post.year_posted==2014, Post.show_to_users=='t', Post.subreddit==subreddit)
+    for t in thresholds:
+        temp_images = query_1.filter(Post.score >= t[0], Post.score <= t[1]).order_by(db.func.random())
+        image_classes.append(temp_images)
 
-    low_score_images = query_1.filter(Post.score <= score_threshold).order_by(db.func.random())
-    high_score_images = query_1.filter(Post.score > score_threshold).order_by(db.func.random())
-
-    low_index = 0
-    high_index = 0
-
+    indices = [0]*len(thresholds)
     image_pairs = []
-    weights = [.25,.25,.25,.25]
-    experiment_condition =  choice(np.arange(len(weights)), p=weights)
     for i in np.arange(num_questions):
+        first_threshold = choice(np.arange(len(thresholds)))
+        second_threshold = choice(np.arange(len(thresholds)))
 
-        #low low experiment 
-        if experiment_condition == 0:
-            first_image = low_score_images.offset(low_index).first()
-            low_index += 1
-            second_image = low_score_images.offset(low_index).first()
-            while first_image.score == second_image.score:
-                low_index += 1
-                second_image = low_score_images.offset(low_index).first()
-            low_index += 1
+        first_index = indices[first_threshold]
+        first_image = image_classes[first_threshold].offset(first_index).first()
+        indices[first_threshold] = first_index + 1 
 
-        if experiment_condition == 1:
-            first_image = low_score_images.offset(low_index).first()
-            low_index += 1
-            second_image = low_score_images.offset(low_index).first()
-            while first_image.score == second_image.score:
-                low_index += 1
-                second_image = low_score_images.offset(low_index).first()
-            low_index += 1
+        second_index = indices[second_threshold]
 
-        if experiment_condition == 2:
-            first_image = high_score_images.offset(high_index).first()
-            high_index += 1
-            second_image = low_score_images.offset(low_index).first()
-            low_index += 1
-
-        if experiment_condition == 3:
-            first_image = high_score_images.offset(high_index).first()
-            high_index += 1
-            second_image = high_score_images.offset(high_index).first()
-            while first_image.score == second_image.score:
-                high_index += 1
-                second_image = high_score_images.offset(high_index).first()
-            high_index += 1
-
+        second_image = image_classes[second_threshold].offset(second_index).first()
+        while first_image.score == second_image.score:
+            second_index += 1
+            second_image = image_classes[second_threshold].offset(second_index).first()
+        indices[second_threshold] = second_index + 1
         image_pairs.append([first_image, second_image])
+
 
     mc = pylibmc.Client(["127.0.0.1"], binary=True, behaviors={"tcp_nodelay": True, "ketama": True})
     mc.set(current_uuid + '_images',image_pairs, time=10*60)
