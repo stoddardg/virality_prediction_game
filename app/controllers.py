@@ -212,7 +212,7 @@ def end_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
     current_score = get_current_user_score(request.cookies)
     current_subreddit = get_current_subreddit(request.cookies)
-    
+    [current_subreddit, pic_source_url, pic_source_name] = get_subreddit_info(current_subreddit)
     new_score = UserScore(uuid=current_uuid,
         subreddit=current_subreddit,
         num_correct = current_score['num_correct'],
@@ -224,7 +224,7 @@ def end_game():
     db.session.commit()
 
     num_bins = 10
-    values = get_score_distributions(current_subreddit, num_bins)
+    values = get_score_distribution(current_subreddit, num_bins)
 
     if current_score['num_correct'] + current_score['num_wrong'] == 0:
         current_pct = 0
@@ -238,22 +238,36 @@ def end_game():
     user_val *= 1.1
 
 
+    [median_score] = get_score_distribution_quantile(current_subreddit, [50])
 
-    response = make_response(render_template('end_game_thanks.html', 
+
+    sub_html = "<a href=%s> %s </a>" % (pic_source_url, 'r/'+current_subreddit)
+
+    show_peer_scores = True # change this later to an experiment. 
+
+
+
+    response = make_response(render_template('end_game_text_only.html', 
         correct_pct=format_correct_percentage(current_score), 
-        score_dist=values, 
+        median_score=int(median_score), 
         user_score=current_pct, 
-        user_val = user_val , 
-        bin_size=bin_size,
-        subreddit=current_subreddit))
+        subreddit=sub_html,
+        show_peer_scores=show_peer_scores))
 
-    print response
+
+    # response = make_response(render_template('end_game_thanks.html', 
+    #     correct_pct=format_correct_percentage(current_score), 
+    #     score_dist=values, 
+    #     user_score=current_pct, 
+    #     user_val = user_val , 
+    #     bin_size=bin_size,
+    #     subreddit=current_subreddit))
+
     return response
 
 
-def get_score_distributions(subreddit, num_bins):
+def get_score_distribution_quantile(subreddit, quantiles):
     query = UserScore.query.filter_by(subreddit=subreddit)
-
     all_scores = []
 
     for x in query.all():
@@ -264,16 +278,28 @@ def get_score_distributions(subreddit, num_bins):
         pct_correct *= 100
         all_scores.append(pct_correct)
 
-    print all_scores
+
+    return np.percentile(all_scores, quantiles)
+
+
+def get_score_distribution(subreddit, num_bins):
+    query = UserScore.query.filter_by(subreddit=subreddit)
+    all_scores = []
+
+    for x in query.all():
+        if x.num_correct + x.num_wrong == 0:
+            continue
+        else:
+            pct_correct = (x.num_correct*1.0) / (x.num_correct + x.num_wrong)
+        pct_correct *= 100
+        all_scores.append(pct_correct)
+
 
     bin_size = 100/num_bins
 
     hist, bin_edges = np.histogram(all_scores, bins=bin_size*np.arange(num_bins), density=False)
     hist = np.multiply(hist, 1.0)
     hist /= np.sum(hist)
-
-    print 'sum is', np.sum(hist)
-    print 'bin_edges',bin_edges
     return list(hist)
 
 def get_current_user(cookie_uuid, subreddit=None):

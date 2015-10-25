@@ -1,0 +1,32 @@
+{% extends "template.html" %}
+
+{% block intro_text %}
+
+
+<p class="feedback-text"> You guessed <b> {{correct_pct}}%</b> of pairs correctly. </p>
+
+{% if show_peer_scores %}
+<p class="feedback-text"> The average score for {{subreddit|safe}} is <b>{{median_score}}%</b>.  </p>
+{% endif %}
+
+
+<br>
+
+<p class="thank-you-text"> Thanks for playing. </p>
+<!-- Please remember to take <a href="/survey">the survey</a> Or use the menu above to choose another subreddit and play again.</p> -->
+
+<ul class=" center-block" style="font-size:150%;">
+
+<li> Remember to take <a href="/survey">the survey</a>. </li>
+
+<li> <a href='/'> Play again</a>.</li>
+
+</ul>
+
+
+{% endblock %}
+
+{% block content %}
+
+
+{% endblock %}

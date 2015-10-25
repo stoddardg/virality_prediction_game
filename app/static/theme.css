@@ -87,6 +87,16 @@ background-color: rgb(22, 105, 173);
   font-size:300%
 }
 
+.thank-you-text{
+  font-size:150%;
+  text-align: left;
+}
+
+.feedback-text{
+  font-size: 250%;
+  text-align:center;
+}
+
 @media screen and (max-width: 480px) {
     .image_title{
       font-size:100%;
@@ -99,6 +109,9 @@ background-color: rgb(22, 105, 173);
     }
     .more-popular-text{
       font-size:200%;
+    }
+    .feedback-text{
+      font-size:150%;
     }
 }
 

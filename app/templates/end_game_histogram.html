@@ -1,0 +1,85 @@
+{% extends "template.html" %}
+
+{% block intro_text %}
+<p style="font-size:150%">Thanks for playing! You guessed <b>{{correct_pct}}%</b> of pairs correctly. 
+Check the chart below to see how you did relative to other players.</p>
+
+<p style="font-size:150%"> Please remember to take the survey. Or use the menu above to choose another subreddit and play again.</p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class='col-xs-12' id="histogram_container"></div>
+</div>
+
+<script>
+    
+    $(function () {
+    console.log("YO")
+    console.log( {{score_dist}})
+    $('#histogram_container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        tooltip: {
+            enabled: false
+        },
+        title: {
+            text: 'Scores for ' + '{{ subreddit }}'
+        },
+         xAxis: {
+            min:0,
+            max:100,
+            title:{
+                text: "Score"
+            },
+            labels: {
+                formatter: function(){
+                    return this.value + "%"
+                }
+            }   
+        },
+        yAxis: {
+            min: 0,
+            // max: 1,
+        },
+        plotOptions: {
+            column: {
+                // pointPadding: 0.2,
+                borderWidth: 0,
+                grouping:false,
+                starting_point:0,
+                pointInterval: {{ bin_size }},
+                // pointPlacement:"between",
+                // groupPadding:0,
+                // pointWidth: 40
+                // pointInterval:10,
+            },
+            series: {
+                groupPadding:0,
+                // pointPadding:.1,
+                // stacking: 'percent'
+            }
+        },
+        series: [{
+            data: {{ score_dist }}, 
+            color: "red",
+            name: "Everyone else",
+            // groupPadding:0
+        },
+        {
+            data: [[ {{ user_score }} , {{ user_val }}]],
+            // data: [[ 65, {{user_val }}]],
+            color:"blue",
+            name: "You",
+            // pointPlacement:-0.2,
+            pointPadding:0.4
+        },
+        ]
+
+    });
+});
+</script>
+
+
+{% endblock %}
