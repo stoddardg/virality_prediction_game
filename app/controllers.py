@@ -254,7 +254,6 @@ def end_game():
         subreddit=sub_html,
         show_peer_scores=show_peer_scores))
 
-
     # response = make_response(render_template('end_game_thanks.html', 
     #     correct_pct=format_correct_percentage(current_score), 
     #     score_dist=values, 
@@ -285,7 +284,6 @@ def get_score_distribution_quantile(subreddit, quantiles):
 def get_score_distribution(subreddit, num_bins):
     query = UserScore.query.filter_by(subreddit=subreddit)
     all_scores = []
-
     for x in query.all():
         if x.num_correct + x.num_wrong == 0:
             continue
@@ -296,7 +294,6 @@ def get_score_distribution(subreddit, num_bins):
 
 
     bin_size = 100/num_bins
-
     hist, bin_edges = np.histogram(all_scores, bins=bin_size*np.arange(num_bins), density=False)
     hist = np.multiply(hist, 1.0)
     hist /= np.sum(hist)
@@ -310,31 +307,6 @@ def get_current_user(cookie_uuid, subreddit=None):
         db.session.commit()    
         return new_user
     return current_user
-
-
-def get_current_user_and_score(cookie_uuid):
-    current_user = User.query.get(cookie_uuid)
-    if current_user is None:
-        new_user = User(uuid=cookie_uuid)
-        db.session.add(new_user)
-        db.session.commit()    
-        return new_user
-    
-
-    query = UserScore.query.filter_by(uuid=current_user.uuid, subreddit=current_user.current_image_source)
-
-    for x in query.order_by(UserScore.date_created.desc()).all():
-        print x.date_created, x.num_correct, x.num_wrong
-    current_score = query.order_by(UserScore.date_created.desc()).limit(1).first()
-
-    if current_score is None:
-        current_score = UserScore(uuid=current_user.uuid, subreddit=current_user.current_image_source)
-        db.session.add(current_score)
-        db.session.commit()
-
-
-    return current_user, current_score
-
 
 def make_new_score():
     num_questions = 10 # randomize this later
@@ -402,17 +374,20 @@ def update_article_source(current_uuid, article_source):
 def get_thresholds(current_subreddit):
 
     if current_subreddit == 'aww':
-        thresholds = [ (0,10),(11,1000000)]
+        thresholds = [ (0,10),(11,25),(25,75),(75,1000000)]
         return thresholds
 
     if current_subreddit == 'pics':
-        thresholds = [ (0,10),(11,1000000)]
+        thresholds = [ (0,10),(11,25), (25, 75), (75,1000000)]
         return thresholds
 
     if current_subreddit == 'OldSchoolCool':
-        thresholds = [ (0,10),(11,1000000)]
+        thresholds = [ (0,10),(11,25),(25,75),(75,1000000)]
         return thresholds
 
+    if current_subreddit == 'funny':
+        thresholds = [ (0,10),(11,25),(25,75),(75,1000000)]
+        return thresholds
 
 
 
@@ -549,7 +524,7 @@ def login():
 
 
 def get_subreddit_info(subreddit=None):
-    subreddits = ['pics','aww','OldSchoolCool']
+    subreddits = ['pics','aww','OldSchoolCool', 'funny']
 
     if subreddit == 'aww':
         pic_source_url = "http://www.reddit.com/r/aww"
@@ -561,6 +536,9 @@ def get_subreddit_info(subreddit=None):
     elif subreddit == 'OldSchoolCool':
         pic_source_url = "https://www.reddit.com/r/oldschoolcool"
         pic_source_name = 'reddit.com/r/oldschoolcool'
+    elif subreddit == 'funny':
+        pic_source_url = 'https://www.reddit.com/r/funny'
+        pic_source_name = 'reddit.com/r/funny'
     else:
         random_sub = choice(subreddits)
 
