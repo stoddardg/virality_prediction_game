@@ -95,6 +95,7 @@ class SurveyResult(db.Model):
     type_of_use = db.Column(db.String)
     frequency_of_use = db.Column(db.String)
     length_of_use = db.Column(db.String)
+    user_id = db.Column(db.String)
 
 class Vote(db.Model):
 

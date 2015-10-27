@@ -519,11 +519,12 @@ def get_experimental_condition(subreddit):
 @predict_game.route('/survey', methods=['GET', 'POST'])
 def login():
     form = SurveyForm()
-
+    current_uuid = get_uuid_from_cookie(request.cookies)
     if request.method == 'POST':
         s = SurveyResult(type_of_use = str(form.type_of_use.data),
                         frequency_of_use = str(form.use_frequency.data),
-                        length_of_use = str(form.length_of_use.data)
+                        length_of_use = str(form.length_of_use.data),
+                        user_id = current_uuid,
                         )
         db.session.add(s)
         db.session.commit()
