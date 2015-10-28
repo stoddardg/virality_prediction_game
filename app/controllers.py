@@ -389,13 +389,13 @@ def get_thresholds(current_subreddit):
 
     if current_subreddit == 'aww':
         thresholds = [ (0,10),(11,25),(25,75),(75,150), (150, 500), (500, 1000000)]
-        weights = np.array([1.0, 1.0, 2.0, 2.0, 2.0, 2.0])
+        weights = np.array([1.0, 1.0, 2.0, 2.5, 2.5, 2.5])
         weights /= sum(weights)
         return thresholds, weights
 
     if current_subreddit == 'pics':
         thresholds = [ (0,10),(11,25),(25,75),(75,150), (150, 500), (500, 1000000)]
-        weights = np.array([1.0, 1.0, 2.0, 2.0, 2.0, 2.0])
+        weights = np.array([1.0, 1.0, 2.0, 2.5, 2.5, 2.5])
         weights /= sum(weights)
         return thresholds, weights
 
@@ -407,7 +407,7 @@ def get_thresholds(current_subreddit):
 
     if current_subreddit == 'funny':
         thresholds = [ (0,10),(11,25),(25,75),(75,150), (150, 500), (500, 1000000)]
-        weights = np.array([1.0, 1.0, 2.0, 2.0, 2.0, 2.0])
+        weights = np.array([1.0, 1.0, 2.0, 2.5, 2.5, 2.5])
         weights /= np.sum(weights)
         return thresholds, weights
 
