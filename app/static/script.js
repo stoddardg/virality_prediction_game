@@ -48,7 +48,7 @@ $(function() {
 $(function() {
     $('#vote_button_1').click(function() {
         $.ajax({
-            url: '/record_vote',
+            url: '/record-vote',
             data: {choice : 1},
             success: function(data ) {
                 $("#image_1_score").html(data.image_1_karma);
@@ -67,7 +67,7 @@ $(function() {
 $(function() {
     $('#vote_button_2').click(function() {
         $.ajax({
-            url: '/record_vote',
+            url: '/record-vote',
             data: {choice : 2},
             success: function(data ) {
                 $("#image_1_score").html(data.image_1_karma);
@@ -90,7 +90,7 @@ $(function() {
     $('#next_button').click(function() {
         next_button_clicked = 1
         $.ajax({
-            url: '/get_next_images',
+            url: '/get-next-images',
             success: update_images
         })
         });
@@ -155,7 +155,7 @@ function click_next_button(){
       
         next_button_clicked = 1
         $.ajax({
-            url: '/get_next_images',
+            url: '/get-next-images',
             success: update_images
         })
         next_button_clicked = 1
@@ -164,7 +164,6 @@ function click_next_button(){
 
 function grade_result(json_data)
 {
-    console.log(json_data)
 
     if(json_data.correct == 1)
     {
@@ -212,7 +211,7 @@ function grade_result(json_data)
 
     if(json_data.end_of_game ==1 )
     {
-        setTimeout(function(){window.location.href = '/end_game';}, 1500)    
+        setTimeout(function(){window.location.href = '/end-game';}, 1500)    
 
     }
     else

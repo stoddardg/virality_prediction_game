@@ -21,7 +21,7 @@ predict_game = Blueprint("app",__name__)
 
 UUID_NAME = 'guessit_uuid'
 
-@predict_game.route('/record_vote', methods=['POST','GET'])
+@predict_game.route('/record-vote', methods=['POST','GET'])
 def record_vote():
 
     current_uuid = get_uuid_from_cookie(request.cookies)
@@ -103,7 +103,7 @@ def record_vote():
 
 
 
-@predict_game.route('/get_next_images', methods=['POST','GET'])
+@predict_game.route('/get-next-images', methods=['POST','GET'])
 def get_next_images():
 
     current_uuid =  get_uuid_from_cookie(request.cookies)
@@ -169,9 +169,9 @@ def get_current_subreddit(cookies):
 
 
 
-@predict_game.route('/render_game')
+@predict_game.route('/render-game')
 def start_game():
-    sub_param = request.args.get('article_source')
+    sub_param = request.args.get('article-source')
     [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
 
@@ -207,7 +207,7 @@ def start_game():
     return response
 
 
-@predict_game.route('/end_game')
+@predict_game.route('/end-game')
 def end_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
     current_score = get_current_user_score(request.cookies)
@@ -583,7 +583,7 @@ def about():
 
 
 
-@predict_game.route('/reddit_description')
+@predict_game.route('/reddit-description')
 def reddit_description():
     response = make_response(render_template('reddit_description.html'))
     return response
