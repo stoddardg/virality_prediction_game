@@ -1,6 +1,16 @@
 {% extends "template.html" %}
 
 {% block intro_text %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=2250399447";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 
 <p class="feedback-text"> You guessed <b> {{correct_pct}}%</b> of pairs correctly. </p>
@@ -9,13 +19,13 @@
 <p class="feedback-text"> The average score for {{subreddit|safe}} is <b>{{median_score}}%</b>.  </p>
 {% endif %}
 
-<p class="share-text">  Share your results! 
-<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.guessthekarma.com" data-text="
-What makes a picture popular On Reddit? I guessed {{correct_pct}}% of these right. Think you can do better?" 
+<p class="share-text">  Share your results!  
 
 
-data-count="none">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/share" class="twitter-share-button"  data-url="http://www.guessthekarma.com" data-text="
+What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these right. Think you can do better?"  data-count="none">Tweet</a>
+
+<a class="fb-share-button" data-href="http://www.guessthekarma.com" style="vertical-align:top;zoom:1;*display:inline" data-layout="button"></a>
 
 </p>
 
