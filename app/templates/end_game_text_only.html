@@ -9,6 +9,15 @@
 <p class="feedback-text"> The average score for {{subreddit|safe}} is <b>{{median_score}}%</b>.  </p>
 {% endif %}
 
+<p class="share-text">  Share your results! 
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.guessthekarma.com" data-text="
+What makes a picture popular On Reddit? I guessed {{correct_pct}}% of these right. Think you can do better?" 
+
+
+data-count="none">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+</p>
 
 <br>
 
@@ -20,6 +29,7 @@
 <li> Remember to take <a href="/survey">the survey</a>. </li>
 
 <li> <a href='/'> Play again</a>.</li>
+
 
 </ul>
 

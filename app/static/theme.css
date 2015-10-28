@@ -97,6 +97,12 @@ background-color: rgb(22, 105, 173);
   text-align:center;
 }
 
+.share-text{
+  font-size: 200%;
+  text-align:center;
+}
+
+
 @media screen and (max-width: 480px) {
     .image_title{
       font-size:100%;
@@ -112,6 +118,9 @@ background-color: rgb(22, 105, 173);
     }
     .feedback-text{
       font-size:150%;
+    }
+    .share-text{
+      font-size:110%;
     }
 }
 
