@@ -388,26 +388,34 @@ def update_article_source(current_uuid, article_source):
 def get_thresholds(current_subreddit):
 
     if current_subreddit == 'aww':
-        thresholds = [ (0,10),(11,25),(25,75),(75,1000000)]
-        return thresholds
+        thresholds = [ (0,10),(11,25),(25,75),(75,150), (150, 500), (500, 1000000)]
+        weights = np.array([1.0, 1.0, 2.0, 2.0, 2.0, 2.0])
+        weights /= sum(weights)
+        return thresholds, weights
 
     if current_subreddit == 'pics':
-        thresholds = [ (0,10),(11,25), (25, 75), (75,1000000)]
-        return thresholds
+        thresholds = [ (0,10),(11,25),(25,75),(75,150), (150, 500), (500, 1000000)]
+        weights = np.array([1.0, 1.0, 2.0, 2.0, 2.0, 2.0])
+        weights /= sum(weights)
+        return thresholds, weights
 
     if current_subreddit == 'OldSchoolCool':
         thresholds = [ (0,10),(11,25),(25,75),(75,1000000)]
-        return thresholds
+        weights = np.array([1.0, 1.0, 2.0, 2.0])
+        weights /= sum(weights)
+        return thresholds, weights
 
     if current_subreddit == 'funny':
-        thresholds = [ (0,10),(11,25),(25,75),(75,1000000)]
-        return thresholds
+        thresholds = [ (0,10),(11,25),(25,75),(75,150), (150, 500), (500, 1000000)]
+        weights = np.array([1.0, 1.0, 2.0, 2.0, 2.0, 2.0])
+        weights /= np.sum(weights)
+        return thresholds, weights
 
 
 
 def setup_images(current_uuid, subreddit, num_questions):
 
-    thresholds = get_thresholds(subreddit)
+    thresholds, weights = get_thresholds(subreddit)
 
     image_classes = []
 
@@ -419,8 +427,8 @@ def setup_images(current_uuid, subreddit, num_questions):
     indices = [0]*len(thresholds)
     image_pairs = []
     for i in np.arange(num_questions):
-        first_threshold = choice(np.arange(len(thresholds)))
-        second_threshold = choice(np.arange(len(thresholds)))
+        first_threshold = choice(np.arange(len(thresholds)), p=weights )
+        second_threshold = choice(np.arange(len(thresholds)), p=weights)
 
         first_index = indices[first_threshold]
         first_image = image_classes[first_threshold].offset(first_index).first()
