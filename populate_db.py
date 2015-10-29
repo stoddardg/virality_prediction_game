@@ -52,8 +52,8 @@ def check_image(image_url, client):
     return image.link
 
 def populate_table(datafile, sample_size=1000):
-    imgur_client_id = '076efcf250d6c46'
-    imgur_client_secret = '4994cb5d85b7530d64219337a9d56fe3c51491da'
+    imgur_client_id = 'my_id'
+    imgur_client_secret = 'my_secret'
 
     client = imgurpython.ImgurClient(imgur_client_id, imgur_client_secret)
 
