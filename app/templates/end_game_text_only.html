@@ -31,15 +31,14 @@ What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these righ
 
 <br>
 
-<p class="thank-you-text"> Thanks for playing. </p>
-<!-- Please remember to take <a href="/survey">the survey</a> Or use the menu above to choose another subreddit and play again.</p> -->
+<!-- <p class="thank-you-text"> Thanks for playing. </p>
 
 <ul class=" center-block" style="font-size:150%;">
 
 <li> Remember to take <a href="/survey">the survey</a>. </li>
 
 <li> <a href='/'> Play again</a>.</li>
-
+ -->
 
 </ul>
 
@@ -47,6 +46,23 @@ What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these righ
 {% endblock %}
 
 {% block content %}
+  
+  <h1>Reddit Use</h1>
+  <form action="/survey" method="post" name="survey">
+      <p class='survey-text'>How often do you visit Reddit? {{ form.use_frequency }}</p>
 
+      <p class='survey-text' >How long have you used Reddit? 
+      <!-- <div class='row'> -->
+      {{ form.length_of_use }}</p>
+      <!-- </div> -->
+      <p class='survey-text'> Describe your use Reddit. Check all that apply <p>
+      {{form.type_of_use}}
+
+
+
+      <p class='survey-text'><input type="submit" value="Submit Survey"></p>
+
+
+  </form>
 
 {% endblock %}

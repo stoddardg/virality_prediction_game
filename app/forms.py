@@ -33,6 +33,7 @@ class SurveyForm(Form):
     ('vote','Vote'),
     ('comment','Write comments'),
     ('submit_content','Submit Content'),
+    ('save_content', 'Save Content'),
     ('all','All of the above')
     ]
 

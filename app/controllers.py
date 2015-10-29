@@ -254,6 +254,7 @@ def end_game():
 
     show_peer_scores = True # change this later to an experiment. 
 
+    form = SurveyForm()
 
 
     response = make_response(render_template('end_game_text_only.html', 
@@ -261,15 +262,11 @@ def end_game():
         median_score=int(mean_score), 
         user_score=current_pct, 
         subreddit=sub_html,
-        show_peer_scores=show_peer_scores))
+        show_peer_scores=show_peer_scores,
+        form=form,
+        title="Reddit Use"))
 
-    # response = make_response(render_template('end_game_thanks.html', 
-    #     correct_pct=format_correct_percentage(current_score), 
-    #     score_dist=values, 
-    #     user_score=current_pct, 
-    #     user_val = user_val , 
-    #     bin_size=bin_size,
-    #     subreddit=current_subreddit))
+
 
     return response
 
@@ -532,7 +529,7 @@ def get_experimental_condition(subreddit):
 
 
 @predict_game.route('/survey', methods=['GET', 'POST'])
-def login():
+def survey():
     form = SurveyForm()
     current_uuid = get_uuid_from_cookie(request.cookies)
     if request.method == 'POST':
