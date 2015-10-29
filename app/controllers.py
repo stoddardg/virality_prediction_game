@@ -32,6 +32,10 @@ def record_vote():
 
     [image_1, image_2] = get_current_images(request.cookies)
 
+    print image_1
+
+    print image_2
+
     if image_1.score > image_2.score:
         correct_answer = 1
     elif image_2.score > image_1.score:
@@ -88,16 +92,17 @@ def record_vote():
     if current_score['num_correct'] + current_score['num_wrong'] >= current_score['num_questions']:
         ret_vals['end_of_game'] = 1
 
-    print 'DUMPS'
-    print json.dumps(ret_vals)
+    # print 'DUMPS'
+    # print json.dumps(ret_vals)
 
-    print 'JSONIFY'
-    print jsonify(ret_vals)
+    # print 'JSONIFY'
+    # print jsonify(ret_vals)
 
 
     response = jsonify(ret_vals)
     response.set_cookie('num_wrong',str(current_score['num_wrong']))
     response.set_cookie('num_correct',str(current_score['num_correct']))
+    response.set_cookie('num_seen', str(current_score['num_seen'] + 1))
 
     return response
 
@@ -109,9 +114,8 @@ def get_next_images():
     current_uuid =  get_uuid_from_cookie(request.cookies)
 
     current_score = get_current_user_score(request.cookies)
-    # current_score = get_score(current_uuid)
 
-    current_score['num_seen'] = current_score['num_seen'] + 1
+    # current_score['num_seen'] = current_score['num_seen'] + 1
     
     # update_current_score(current_uuid, current_score)
     [current_image_1, current_image_2] = get_current_images(request.cookies)
@@ -131,13 +135,16 @@ def get_next_images():
     response = jsonify(next_image_data)
 
 
-    response.set_cookie('num_seen',str(current_score['num_seen']))
+    # response.set_cookie('num_seen',str(current_score['num_seen']))
     return response
 
 
 def get_current_images(cookies, current_question=None):
     
     current_score = get_current_user_score(cookies)
+
+    print current_score
+
     current_uuid =  get_uuid_from_cookie(cookies)
     subreddit = get_current_subreddit(cookies)
 
@@ -328,7 +335,7 @@ def make_new_score():
     'num_questions':num_questions,
     'num_correct':0,
     'num_wrong':0,
-    'num_seen':1
+    'num_seen':0
     }
     return score_dict
 
