@@ -32,9 +32,9 @@ def record_vote():
 
     [image_1, image_2] = get_current_images(request.cookies)
 
-    print image_1
+    # print image_1
 
-    print image_2
+    # print image_2
 
     if image_1.score > image_2.score:
         correct_answer = 1
@@ -108,6 +108,14 @@ def record_vote():
 
 
 
+def convert_imgur_url(url, size='m'):
+    if size is None:
+        return url
+    pos = url.find('.jpg')
+    beginning = url[:pos]
+    ending = url[pos:]
+    return beginning + size + ending
+
 @predict_game.route('/get_next_images', methods=['POST','GET'])
 def get_next_images():
 
@@ -122,18 +130,25 @@ def get_next_images():
 
     next_image_data = {}
 
-    next_image_data['image_1_src'] = current_image_1.url
+    
+    next_image_data['image_1_src'] = convert_imgur_url(current_image_1.url, size='l')
     next_image_data['image_1_title']  = current_image_1.title
+    next_image_data['image_1_lightbox_src'] = current_image_1.url
 
-    next_image_data['image_2_src'] = current_image_2.url
+
+    next_image_data['image_2_src'] = convert_imgur_url(current_image_2.url, size='l')
     next_image_data['image_2_title']  = current_image_2.title
+    next_image_data['image_2_lightbox_src'] = current_image_2.url
     next_image_data['status'] = 'OK'
 
     num_remaining = current_score['num_questions'] - (current_score['num_correct'] + current_score['num_wrong'])
     next_image_data['num_remaining'] = num_remaining
 
+    # print next_image_data
+
     response = jsonify(next_image_data)
 
+    print next_image_data.keys()
 
     # response.set_cookie('num_seen',str(current_score['num_seen']))
     return response
@@ -143,7 +158,7 @@ def get_current_images(cookies, current_question=None):
     
     current_score = get_current_user_score(cookies)
 
-    print current_score
+    # print current_score
 
     current_uuid =  get_uuid_from_cookie(cookies)
     subreddit = get_current_subreddit(cookies)

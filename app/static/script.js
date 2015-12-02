@@ -1,32 +1,3 @@
-// $(function() {
-//      $('#image_1').on('click',function(){
-//         var src = $(this).attr('src');
-//         var img = '<img src="' + src + '" class="img-responsive"/>';
-//         $('#myModal').modal();
-//         $('#myModal').on('shown.bs.modal', function(){
-//             $('#myModal .modal-body').html(img);
-//         });
-//         $('#myModal').on('hidden.bs.modal', function(){
-//             $('#myModal .modal-body').html('');
-//         });
-//    });
-// });
-
-// $(function() {
-//      $('#image_2').on('click',function(){
-//         var src = $(this).attr('src');
-//         var img = '<img src="' + src + '" class="img-responsive"/>';
-//         $('#myModal').modal();
-//         $('#myModal').on('shown.bs.modal', function(){
-//             $('#myModal .modal-body').html(img);
-//         });
-//         $('#myModal').on('hidden.bs.modal', function(){
-//             $('#myModal .modal-body').html('');
-//         });
-//    });
-// });
-
-
 $(function() {
     $('#remove_button_1').click(function() {
         $.ajax({
@@ -105,30 +76,61 @@ $(function() {
         });
 });
 
-
+var image_data;
 function update_images(json_result)
 {
     // json_result = jQuery.parseJSON(data);
-
+    image_data = json_result
+    console.log("At the top")
     $("#image_1").attr('src',json_result.image_1_src)
-    $("#image_1").on('load', function(){
-        $("#image_1_link").attr('href', json_result.image_1_src)
-        $("#image_1_title").html(json_result.image_1_title)
+    // $("#image_1").on('load', function(){
+    //     $("#image_1_link").attr('href', json_result.image_1_lightbox_src)
+    //     console.log("called")
+    //     console.log(i)
+    //     i = i + 1
+    //     console.log(json_result)
+    //     $("#image_1_title").html(json_result.image_1_title)
+    //     $("#image_1_caption").css('visibility', 'hidden')
+    //     $("#vote_button_1").prop('disabled', false);
+
+
+    // })
+    $("#image_2").attr('src',json_result.image_2_src)
+    // $("#image_2").on('load',function(){
+    //     $("#image_2_link").attr('href', json_result.image_2_lightbox_src)
+    //     $("#image_2_title").html(json_result.image_2_title)
+    //     $("#image_2_caption").css('visibility', 'hidden')
+    //     $("#vote_button_2").prop('disabled', false);
+    //     enable_buttons(json_result)
+
+    // })
+    // enable_buttons(json_result)
+}
+
+$(document).ready(function(){
+
+   $("#image_1").on('load', function(){
+        $("#image_1_link").attr('href', image_data.image_1_lightbox_src)
+       
+        $("#image_1_title").html(image_data.image_1_title)
         $("#image_1_caption").css('visibility', 'hidden')
         $("#vote_button_1").prop('disabled', false);
 
-    })
-    $("#image_2").attr('src',json_result.image_2_src)
-    $("#image_2").on('load',function(){
-        $("#image_2_link").attr('href', json_result.image_2_src)
-        $("#image_2_title").html(json_result.image_2_title)
-        $("#image_2_caption").css('visibility', 'hidden')
-        $("#vote_button_2").prop('disabled', false);
-        enable_buttons(json_result)
 
     })
-    // enable_buttons(json_result)
-}
+
+    $("#image_2").on('load',function(){
+        $("#image_2_link").attr('href', image_data.image_2_lightbox_src)
+        $("#image_2_title").html(image_data.image_2_title)
+        $("#image_2_caption").css('visibility', 'hidden')
+        $("#vote_button_2").prop('disabled', false);
+        enable_buttons(image_data)
+
+    })
+
+
+
+});
 
 function update_images_validation(data)
 {
@@ -143,6 +145,10 @@ function update_images_validation(data)
     $("#image_2_link").attr('href', json_result.image_2_src)
     $("#image_2_id").html(json_result.image_2_id)
     $("#image_2_title").html(json_result.image_2_title)
+
+    
+
+
 
 }
 
@@ -164,7 +170,7 @@ function click_next_button(){
 
 function grade_result(json_data)
 {
-    console.log(json_data)
+    // console.log(json_data)
 
     if(json_data.correct == 1)
     {
@@ -245,8 +251,8 @@ function enable_buttons(json_data)
 
 
     $("#num_remaining").html(json_data['num_remaining'])
-
-
 }
+
+
 
 

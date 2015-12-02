@@ -2,6 +2,8 @@ import pandas
 import imgurpython
 from imgurpython.helpers.error import ImgurClientError
 
+
+import config
 from app import db
 from app.models import Post
 from sqlalchemy.exc import IntegrityError
@@ -52,8 +54,13 @@ def check_image(image_url, client):
     return image.link
 
 def populate_table(datafile, sample_size=1000):
-    imgur_client_id = 'my_id'
-    imgur_client_secret = 'my_secret'
+    # imgur_client_id = 'my_id'
+    # imgur_client_secret = 'my_secret'
+
+    imgur_client_id = config.IMGUR_CLIENT_ID
+    imgur_client_secret = config.IMGUR_SECRET_KEY
+
+
 
     client = imgurpython.ImgurClient(imgur_client_id, imgur_client_secret)
 
