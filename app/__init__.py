@@ -34,10 +34,10 @@ def not_found(error):
 MAX_COOKIE_AGE = 4*3600
 
 from controllers import predict_game
-from image_moderation_controllers import image_moderation
+# from image_moderation_controllers import image_moderation
 
 app.register_blueprint(predict_game)
-app.register_blueprint(image_moderation)
+# app.register_blueprint(image_moderation)
 
 # Log only in production mode.
 

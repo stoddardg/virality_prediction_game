@@ -7,7 +7,45 @@ from sqlalchemy import ForeignKey
 
 
 db.create_all()
-# Define a User model
+
+
+class Quiz(db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
+
+    subreddit = db.Column(db.String)
+    num_questions = db.Column(db.Integer)
+    # image_pairs = db.Column(db.Array(db.Integer))    
+
+class Quiz_to_ImagePair(db.Model):
+    __tablename__ = 'quiz_to_image_pair'
+    id            = db.Column(db.Integer, primary_key=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
+
+    quiz_id = db.Column(db.Integer, ForeignKey("quiz.id"))
+    image_pair_id = db.Column(db.Integer, ForeignKey("image_pair.id"))    
+
+    image_pair = relationship("ImagePair", foreign_keys=[image_pair_id])
+
+
+class ImagePair(db.Model):
+    id            = db.Column(db.Integer, primary_key=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
+
+    image_1_id = db.Column(db.Integer, ForeignKey("post.id"), default=None)
+    image_2_id = db.Column(db.Integer, ForeignKey("post.id"), default=None)
+
+
+    image_1 = relationship("Post", foreign_keys=[image_1_id])
+    image_2 = relationship("Post", foreign_keys=[image_2_id])    
+
+
 class Post(db.Model):
     __tablename__ = 'post'
     id            = db.Column(db.Integer, primary_key=True)
@@ -84,6 +122,8 @@ class UserScore(db.Model):
 
     num_questions = db.Column(db.Integer, default=10)
 
+    quiz_id = db.Column(db.Integer)
+
 
 
 class SurveyResult(db.Model):
@@ -92,9 +132,13 @@ class SurveyResult(db.Model):
     date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
                                            onupdate=db.func.current_timestamp())
 
-    type_of_use = db.Column(db.String)
     frequency_of_use = db.Column(db.String)
     length_of_use = db.Column(db.String)
+
+    subreddit = db.Column(db.String)
+
+    use_subreddit = db.Column(db.String)
+
     user_id = db.Column(db.String)
 
 class Vote(db.Model):

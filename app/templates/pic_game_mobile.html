@@ -11,10 +11,9 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 
 <p class="more-popular-text"> Which was more popular? </p>
 
-
 <div class='row'>
     <div class="col-xs-12">
-      <p  class="text-center"> <span id="num_remaining" >{{num_remaining}}</span> pairs remaining</p> 
+      <p  class="text-main"> <span id="num_remaining" >{{num_remaining}}</span> pairs remaining</p> 
     <!-- </div> -->
 </div>
 
@@ -36,34 +35,39 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
     <div class="col-md-6 col-xs-6">     
             
       <div class="caption">
-         <h2 id="image_1_caption" class="text-center" style="visibility: hidden">  Karma: <span id="image_1_score" ></span> </h2>
+         <h2 id="image_1_caption" class="text-main" style="visibility: hidden">  Karma: <span id="image_1_score" ></span> </h2>
       </div>
       <div class="btn-group-vertical btn-block btn-group-lg">
         <button type="button" id="vote_button_1" class="btn btn-info"> More popular </button>
       </div>
-      <br>
-      <div class="caption">
+      <div class="title_container">
            <span id="image_1_title" class="image_title"> {{image_1_title}}</span> 
       </div>
-      <a id='image_1_link' data-lightbox="image_1" href={{ image_1_lightbox_src }}>   
-      <img class="img-gtk" id='image_1'  src={{image_1_src}}  /> </a>
+      <div class="image_container">
+        <a id='image_1_link' data-lightbox="image_1" href="">   
+        <img class="img-responsive" id='image_1'  src=""  /> </a>
+      </div>
+      <!-- <img class="img-gtk" id='image_1'  src={{image_1_src}}  /> </a> -->
+
     </div>
 
 
 
     <div class="col-md-6 col-xs-6">
         <div class="caption">
-          <h2 id="image_2_caption" class="text-center" style="visibility: hidden"> Karma: <span id="image_2_score" ></span> </h2>
+          <h2 id="image_2_caption" class="text-main" style="visibility: hidden"> Karma: <span id="image_2_score" ></span> </h2>
         </div>
         <div class="btn-group-vertical btn-block btn-group-lg">
           <button type="button" id="vote_button_2" class="btn btn-info"> More popular </button>
         </div>
-        <br>
-        <div class="caption">
+        <div class="title_container">
           <span id="image_2_title" class="image_title"> {{image_2_title}} </span>
         </div>
-        <a id='image_2_link' data-lightbox="image_2" href={{image_2_lightbox_src}}>   
-        <img class="img-gtk" id='image_2' src={{image_2_src}} /> </a>
+        <div class="image_container">
+          <a id='image_2_link' data-lightbox="image_2" href="">   
+          <img class="img-responsive" id='image_2' src="" /> </a>
+        </div>
+        <!-- <img class="img-gtk" id='image_2' src={{image_2_src}} /> </a> -->
     </div>
   </div>
 <!-- </div> -->

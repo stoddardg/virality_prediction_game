@@ -1,6 +1,13 @@
 {% extends "template.html" %}
 
 {% block intro_text %}
+
+
+
+
+
+
+
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -12,13 +19,9 @@
 
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-
-<p class="feedback-text"> You guessed <b> {{correct_pct}}%</b> of pairs correctly. </p>
-
-{% if show_peer_scores %}
-<p class="feedback-text"> The average score for {{subreddit|safe}} is <b>{{median_score}}%</b>.  </p>
-{% endif %}
-
+<div class="row">
+<div class="col-xs-12">
+<p class="text-center feedback-text"> You guessed <b> {{correct_pct}}%</b> of pairs correctly. </p>
 <p class="share-text">  Share your results!  
 
 
@@ -28,43 +31,64 @@ What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these righ
 <a class="fb-share-button" data-href="http://www.guessthekarma.com" style="vertical-align:top;zoom:1;*display:inline" data-layout="button"></a>
 
 </p>
-
-<p class="feedback-text"> <a href='/'> Play again </a> </p>
+</div>
+</div>
 
 <br>
 
-<!-- <p class="thank-you-text"> Thanks for playing. </p>
+<div class="row">
+<div class="col-xs-12">
+<p class="text-center survey-title"> Answer the survey to see how you compare to other players. </p>
+</div>
+</div>
 
-<ul class=" center-block" style="font-size:150%;">
 
-<li> Remember to take <a href="/survey">the survey</a>. </li>
+<div class="row">
+<div class="col-xs-12">
 
-<li> <a href='/'> Play again</a>.</li>
- -->
+<p class='text-left survey-text' > 1. Describe your level of Reddit use.</p>
+<div class="btn-group" id="q1-btn-group">
+  <button type="button" class="btn btn-success btn-md survey-button">Heavy user</button>
+  <button type="button" class="btn btn-success btn-md survey-button">Casual user</button>
+  <button type="button" class="btn btn-success btn-md survey-button">Don't use it</button>
+</div>
+</div>
+</div>
 
-</ul>
+<div class="row">
+<div class="col-xs-12">
+<p class='text-left survey-text' > 2. How long have you used Reddit?</p>
+<div class="btn-group" id="q2-btn-group">
+  <button type="button" class="btn btn-success btn-md survey-button">1+ years</button>
+  <button type="button" class="btn btn-success btn-md survey-button">0-12 months</button>
+  <button type="button" class="btn btn-success btn-md survey-button">Don't use it</button>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-xs-12">
+<p class='text-left survey-text' > 3. If you use Reddit, do you pay attention to {{subreddit|safe}}? </p>
+<div class="btn-group" id="q3-btn-group">
+  <button type="button" class="btn btn-success btn-md survey-button">Yes</button>
+  <button type="button" class="btn btn-success btn-md survey-button">No</button>
+  <button type="button" class="btn btn-success btn-md survey-button">N/A</button>
+</div>
+</div>
+</div>
+
+
+<div class="row">
+<div class="col-xs-12" id="peer-scores" hidden>
+<p class="text-center feedback-text" > The average score for {{subreddit|safe}} is <b>{{median_score}}%</b>.  </p>
+<p class = "text-center feedback-text"> You scored higher than {{user_percentile}}% of players.</p>
+<p class="text-center feedback-text"> <a href='/'> Play again </a> </p>
+</div>
+</div>
+
+
+
 
 
 {% endblock %}
 
-{% block content %}
-  
-  <h1>Reddit Use</h1>
-  <form action="/survey" method="post" name="survey">
-      <p class='survey-text'>How often do you visit Reddit? {{ form.use_frequency }}</p>
-
-      <p class='survey-text' >How long have you used Reddit? 
-      <!-- <div class='row'> -->
-      {{ form.length_of_use }}</p>
-      <!-- </div> -->
-      <p class='survey-text'> Describe your use Reddit. Check all that apply <p>
-      {{form.type_of_use}}
-
-
-
-      <p class='survey-text'><input type="submit" value="Submit Survey"></p>
-
-
-  </form>
-
-{% endblock %}
