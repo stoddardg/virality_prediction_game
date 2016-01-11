@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 
 
 def import_quiz(filename):
+    quiz_df = pandas.read_csv(filename)
     for quiz_id, data in quiz_df.groupby('quiz_id'):
         print quiz_id
 
