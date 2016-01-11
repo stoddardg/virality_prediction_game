@@ -376,7 +376,7 @@ function grade_result(user_choice)
     else
     {
         // next_button_clicked = 0
-        setTimeout(advance_images, 500)
+        setTimeout(advance_images, 1500)
 
     }
 
