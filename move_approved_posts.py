@@ -83,3 +83,8 @@ if __name__ == '__main__':
         export_images(sys.argv[2])
     if sys.argv[1] == 'import_images':
         import_images(sys.argv[2])
+
+    if sys.argv[1] == 'import_script':
+        import_quiz(sys.argv[2])
+
+
