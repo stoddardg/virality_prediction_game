@@ -14,7 +14,7 @@ from app import db
 from app import app
 
 
-import pylibmc
+# import pylibmc
 
 from app import MAX_COOKIE_AGE
 # import app
@@ -50,6 +50,9 @@ def record_all_votes():
     current_uuid = get_uuid_from_cookie(request.cookies)
     # print request.args.get('images')
     
+
+    current_subreddit = json.loads(request.args['current_subreddit'])
+
     user_choices = json.loads(request.args['votes'])
     user_correct = json.loads(request.args['user_choice_correct'])
     image_1_reddit_ids = json.loads(request.args['image_1_reddit_ids'])
@@ -70,7 +73,7 @@ def record_all_votes():
     db.session.commit()
 
  
-    current_subreddit = get_current_subreddit(request.cookies)
+    # current_subreddit = get_current_subreddit(request.cookies)
     [current_subreddit, pic_source_url, pic_source_name] = get_subreddit_info(current_subreddit)
     new_score = UserScore(uuid=current_uuid,
         subreddit=current_subreddit,
@@ -125,7 +128,7 @@ def get_game_start_data():
 
     print 'QUIZ ID IS ', quiz_id
 
-    image_pairs = setup_images(current_uuid, subreddit, 0)
+    image_pairs = load_quiz(current_uuid, subreddit, quiz_id=quiz_id)
     
     image_pair_json_data = []
     for pair in image_pairs:
@@ -162,6 +165,8 @@ def get_game_start_data():
 
     response_data['num_questions'] = len(image_pair_json_data)
 
+    response_data['current_subreddit'] = subreddit
+
 
     return jsonify(response_data)
    
@@ -197,10 +202,6 @@ def start_game():
     current_uuid = get_uuid_from_cookie(request.cookies)
 
     quiz_id, num_questions = get_new_quiz(current_uuid, subreddit)
-
-    # current_score = make_new_score()
-
-
 
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
@@ -290,7 +291,6 @@ def format_percentage(num_correct, num_wrong):
     num_answered = num_correct + num_wrong
     if num_answered == 0:
         return '--'
-        # return 100
 
     percent_correct = num_correct / (1.0*num_answered)
     percent_correct *= 100
@@ -318,8 +318,12 @@ def get_uuid_from_cookie(cookie):
     return user_id
 
 
-def load_quiz(current_uuid, subreddit):
-    current_quiz = Quiz.query.filter_by(subreddit=subreddit).order_by(db.func.random()).first()
+def load_quiz(current_uuid, subreddit, quiz_id=None):
+    
+    if quiz_id is not None:
+        current_quiz = Quiz.query.filter_by(id=quiz_id).first()
+    else:
+        current_quiz = Quiz.query.filter_by(subreddit=subreddit).order_by(db.func.random()).first()
 
     print "quiz_id", current_quiz.id
 
@@ -333,11 +337,6 @@ def load_quiz(current_uuid, subreddit):
             image_pairs.append([q.image_pair.image_2, q.image_pair.image_1])
 
     return image_pairs
-
-
-def setup_images(current_uuid, subreddit, num_questions):
-    return load_quiz(current_uuid, subreddit)
-
 
 
 

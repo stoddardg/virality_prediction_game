@@ -28,6 +28,10 @@ var q3_answer;
 $(function() {
     $('#q1-btn-group button').click(function() {
         $('#q1-btn-group button').prop('disabled',true);
+
+        $('#q1-btn-group button').removeClass('btn-danger').addClass('btn-success ');
+        $(this).addClass('btn-danger').removeClass('btn-success ');
+
         q1_answered = 1
         q1_answer = this.innerHTML
         show_peer_scores()
@@ -39,6 +43,8 @@ $(function() {
 $(function() {
     $('#q2-btn-group button').click(function() {
         $('#q2-btn-group button').prop('disabled',true);
+        $('#q2-btn-group button').removeClass('btn-danger').addClass('btn-success ');
+        $(this).addClass('btn-danger').removeClass('btn-success ');
         q2_answered = 1
         q2_answer = this.innerHTML
         show_peer_scores()
@@ -50,6 +56,10 @@ $(function() {
 $(function() {
     $('#q3-btn-group button').click(function() {
         $('#q3-btn-group button').prop('disabled',true);
+        $('#q3-btn-group button').removeClass('btn-danger').addClass('btn-success ');
+        $(this).addClass('btn-danger').removeClass('btn-success ');
+
+
         q3_answered = 1
         q3_answer = this.innerHTML
         show_peer_scores()
@@ -107,23 +117,10 @@ $(function() {
 });
 
 
-var next_button_clicked = 0;
-$(function() {
-    $('#next_button').click(function() {
-        next_button_clicked = 1
-        $.ajax({
-            url: '/get_next_images',
-            success: update_images
-        })
-        });
-});
-
-
 
 var image_data;
 function update_images(json_result)
 {
-    // console.log("At the top")
     $("#image_1").attr('src',images[current_pair].image_1_url)
 
     $("#image_2").attr('src',images[current_pair].image_2_url)
@@ -131,6 +128,7 @@ function update_images(json_result)
 }
 
 
+var current_subreddit;
 
 var current_pair;
 
@@ -178,6 +176,7 @@ if(window.location.pathname == '/render_game')
                 current_pair = 0;
                 total_questions = data.images.length;
                 images = data.images;
+                current_subreddit = data.current_subreddit;
                 update_images();
                 num_correct = 0;
             }
@@ -317,15 +316,15 @@ function grade_result(user_choice)
         {
             $("#vote_button_1").attr('class','btn btn-success')
             $("#vote_button_1").html("Correct!")
-            $("#vote_button_2").attr('class','btn btn-danger')
-            $("#vote_button_2").html("Wrong!")
+            // $("#vote_button_2").attr('class','btn btn-danger')
+            // $("#vote_button_2").html("Wrong!")
         }
         else
         {
             $("#vote_button_2").attr('class','btn btn-success')
             $("#vote_button_2").html("Correct!")
-            $("#vote_button_1").attr('class','btn btn-danger')
-            $("#vote_button_1").html("Wrong!")
+            // $("#vote_button_1").attr('class','btn btn-danger')
+            // $("#vote_button_1").html("Wrong!")
         }
 
     }
@@ -361,7 +360,8 @@ function grade_result(user_choice)
             data: {votes : JSON.stringify(user_choices),
                     user_choice_correct: JSON.stringify(user_choice_correct),
                     image_1_reddit_ids : JSON.stringify(image_1_reddit_id),
-                    image_2_reddit_ids : JSON.stringify(image_2_reddit_id)
+                    image_2_reddit_ids : JSON.stringify(image_2_reddit_id), 
+                    current_subreddit : JSON.stringify(current_subreddit)
 
             },
             success : function(){
@@ -369,15 +369,11 @@ function grade_result(user_choice)
 
 
             });
-        // })
-        // setTimeout(function(){window.location.href = '/end_game';}, 1500)    
 
     }
     else
     {
-        // next_button_clicked = 0
         setTimeout(advance_images, 1500)
-
     }
 
     
