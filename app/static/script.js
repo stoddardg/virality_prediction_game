@@ -219,8 +219,7 @@ function display_image_data()
 
 
     max_title_height = Math.min($(".title_container").height(), Math.max(image_1_title_height, image_2_title_height))
-    
-    $(".title_container").css("height", max_title_height+"px")
+    $(".title_container").css("height", (max_title_height+1)+"px")
 
 
     console.log("max title height " + max_title_height)
@@ -316,15 +315,11 @@ function grade_result(user_choice)
         {
             $("#vote_button_1").attr('class','btn btn-success')
             $("#vote_button_1").html("Correct!")
-            // $("#vote_button_2").attr('class','btn btn-danger')
-            // $("#vote_button_2").html("Wrong!")
         }
         else
         {
             $("#vote_button_2").attr('class','btn btn-success')
             $("#vote_button_2").html("Correct!")
-            // $("#vote_button_1").attr('class','btn btn-danger')
-            // $("#vote_button_1").html("Wrong!")
         }
 
     }
