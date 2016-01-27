@@ -90,7 +90,9 @@ $(function() {
         $('#opinion_button_2').removeClass('btn-warning').addClass('btn-success ');
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_opinion(1)
-
+        $("#both_questions_container #opinion_question").fadeOut("slow", function(){
+        $("#both_questions_container #prediction_question").css("visibility","visible").hide().fadeIn("slow")
+    })
 
     });
 });
@@ -101,7 +103,9 @@ $(function() {
         $('#opinion_button_1').removeClass('btn-warning').addClass('btn-success ');
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_opinion(2)
-
+        $("#both_questions_container #opinion_question").fadeOut("slow", function(){
+        $("#both_questions_container #prediction_question").css("visibility","visible").hide().fadeIn("slow")
+    })
 
 
     });
@@ -150,10 +154,10 @@ function show_peer_scores()
     if(q1_answered == 1 && q2_answered == 1 && q3_answered ==1 && q4_answered==1 && q5_answered==1)
     {
         // $("#survey").attr("hidden", "true")
-        $("#survey").fadeOut('slow')
+        $("#survey").fadeOut('slow', function(){
 
         $("#peer-scores").removeAttr("hidden")
-
+        })
         $.ajax({
             url: '/record_survey_result',
             data: {q1_answer : JSON.stringify(q1_answer),
@@ -481,9 +485,9 @@ function disable_buttons()
 function enable_buttons(json_data)
 {
     $("#vote_button_1").attr("class","btn btn-info")
-    $("#vote_button_1").html("Left image")
+    $("#vote_button_1").html("The left image")
     $("#vote_button_2").attr("class","btn btn-info")
-    $("#vote_button_2").html("Right")
+    $("#vote_button_2").html("The right image")
 
     // $("#num_remaining").html(total_questions - current_pair)
     $("#num_remaining").html(current_pair + 1)
@@ -495,7 +499,8 @@ function enable_buttons(json_data)
     opinion_ready = 0
     guess_ready = 0
 
-
+    $("#both_questions_container #opinion_question").css("visibility","visible").fadeIn()
+    $("#both_questions_container #prediction_question").css("visibility","hidden")
 
     // $("#num_remaining").html(json_data['num_remaining'])
 }
