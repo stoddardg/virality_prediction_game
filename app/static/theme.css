@@ -208,13 +208,16 @@ padding-top: 10px;
       font-size:150%;
     }
     .more-popular-text{
-      font-size:200%;
+      font-size:100%;
     }
     .feedback-text{
       font-size:150%;
     }
     .share-text{
       font-size:110%;
+    }
+    .image_container{
+      height: 200px;
     }
     .fb-share-button span{
       top:0px;
