@@ -273,7 +273,8 @@ def start_game():
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
-        ask_opinion = experiment_params['ask_opinion']
+        # ask_opinion = experiment_params['ask_opinion']
+        ask_opinion = True
         )
     )
 
