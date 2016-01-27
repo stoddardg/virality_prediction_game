@@ -460,7 +460,7 @@ function grade_result()
     }
     else
     {
-        setTimeout(advance_images, 100)
+        setTimeout(advance_images, 1500)
     }
 
     
