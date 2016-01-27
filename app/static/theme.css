@@ -208,6 +208,11 @@ padding-top: 10px;
       font-size:150%;
     }
     .more-popular-text{
+      text-align:left;
+
+      font-size:100%;
+    }
+    .score_text{
       font-size:100%;
     }
     .feedback-text{
