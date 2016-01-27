@@ -1,17 +1,30 @@
-.navbar-custom {
-    background-color: #F0F0F0;
+hr
+{
+    border: 2px solid #000;
 }
 
+/*nav.navbar.navbar-default {
+   background-image: none;
+   background-color: aqua;
+}
 
-​
-.col-xs-6 {
+​body {
+    background-color: #F0F0F0;
+}*/
+
+/*.col-xs-6 {
     width: 48%;
   background-color: white;
     border: 1px solid gainsboro;
     margin: 1%;
   padding-bottom: 13px;
-}
+}*/
 ​
+
+.question_div{
+  background-color: #F0F0F0;
+}
+
 .img-responsive {
     margin: 0 auto;
 }
@@ -124,7 +137,7 @@ background-color: rgb(22, 105, 173);
 .more-popular-text{
   text-align:center;
   font-weight:bold; 
-  font-size:300%
+  font-size:200%
 }
 
 .thank-you-text{
@@ -161,6 +174,13 @@ height: 400px;
 padding-top: 10px;
 
 }
+
+.score_text {
+  text-align: center;
+  font-size:200%;
+}
+
+
 
 .image_container  .img-responsive {
     display: block;

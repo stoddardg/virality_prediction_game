@@ -93,17 +93,7 @@ class User(db.Model):
     date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
                                            onupdate=db.func.current_timestamp())
 
-    current_image_1_id = db.Column(db.Integer, ForeignKey("post.id"), default=None)
-    current_image_2_id = db.Column(db.Integer, ForeignKey("post.id"), default=None)
-
-    current_image_1 = relationship("Post", foreign_keys=[current_image_1_id])
-    current_image_2 = relationship("Post", foreign_keys=[current_image_2_id])
-
-    current_image_source = db.Column(db.String, default=None)
-
-    num_correct = db.Column(db.Integer, default=0)
-    num_wrong = db.Column(db.Integer, default=0)
-    num_seen = db.Column(db.Integer, default=0)
+    original_referrer = db.Column(db.String)
 
 
 class UserScore(db.Model):
@@ -139,6 +129,10 @@ class SurveyResult(db.Model):
 
     use_subreddit = db.Column(db.String)
 
+    vote_on_posts = db.Column(db.String)
+
+    browse_new_queue = db.Column(db.String)
+
     user_id = db.Column(db.String)
 
 class Vote(db.Model):
@@ -164,4 +158,20 @@ class Vote(db.Model):
         self.user_choice = user_choice
         self.correct_answer = correct_answer
         self.experiment_condition = experiment_condition
+
+class OpinionVote(db.Model):
+
+    id            = db.Column(db.Integer, primary_key=True)
+    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
+                                           onupdate=db.func.current_timestamp())
+
+    user_id = db.Column(db.String)
+
+    user_choice = db.Column(db.Integer)
+
+    post_id_1 = db.Column(db.String)
+    post_id_2 = db.Column(db.String)
+    
+    vote_id = db.Column(db.Integer)
 

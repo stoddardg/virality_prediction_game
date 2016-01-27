@@ -1,21 +1,3 @@
-$(function() {
-    $('#remove_button_1').click(function() {
-        $.ajax({
-            url: '/remove_image',
-            data: {id : 1},
-        });
-    });
-});
-
-$(function() {
-    $('#remove_button_2').click(function() {
-        $.ajax({
-            url: '/remove_image',
-            data: {id : 2},
-        });
-    });
-});
-
 
 var q1_answered = 0 
 var q1_answer;
@@ -23,6 +5,10 @@ var q2_answered = 0
 var q2_answer;
 var q3_answered = 0 
 var q3_answer;
+var q4_answered = 0;
+var q4_answer;
+var q5_answered = 0;
+var q5_answer;
 
 
 $(function() {
@@ -68,20 +54,113 @@ $(function() {
     });
 });
 
+$(function() {
+    $('#q4-btn-group button').click(function() {
+        $('#q4-btn-group button').prop('disabled',true);
+        $('#q4-btn-group button').removeClass('btn-danger').addClass('btn-success ');
+        $(this).addClass('btn-danger').removeClass('btn-success ');
+
+
+        q4_answered = 1
+        q4_answer = this.innerHTML
+        show_peer_scores()
+
+
+    });
+});
+
+$(function() {
+    $('#q5-btn-group button').click(function() {
+        $('#q5-btn-group button').prop('disabled',true);
+        $('#q5-btn-group button').removeClass('btn-danger').addClass('btn-success ');
+        $(this).addClass('btn-danger').removeClass('btn-success ');
+
+
+        q5_answered = 1
+        q5_answer = this.innerHTML
+        show_peer_scores()
+
+
+    });
+});
+
+
+$(function() {
+    $('#opinion_button_1').click(function() {
+        $('#opinion_button_2').removeClass('btn-warning').addClass('btn-success ');
+        $(this).addClass('btn-warning').removeClass('btn-success ');
+        record_opinion(1)
+
+
+    });
+});
+
+$(function() {
+    $('#opinion_button_2').click(function() {
+        console.log("2 hi")
+        $('#opinion_button_1').removeClass('btn-warning').addClass('btn-success ');
+        $(this).addClass('btn-warning').removeClass('btn-success ');
+        record_opinion(2)
+
+
+
+    });
+});
+
+
+$(function() {
+    $('#vote_button_1').click(function() {
+        $('#vote_button_2').removeClass('btn-warning').addClass('btn-success ');
+        $(this).addClass('btn-warning').removeClass('btn-success ');
+        record_guess(1);
+    });
+});
+
+
+$(function() {
+    $('#vote_button_2').click(function() {
+        $('#vote_button_1').removeClass('btn-warning').addClass('btn-success ');
+        $(this).addClass('btn-warning').removeClass('btn-success ');
+        record_guess(2);
+    });
+});
+
+
+$(function() {
+    $('#guess-question-only #vote_button_1').click(function() {
+        console.log("WOO")
+        current_opinion = -1;
+        opinion_ready = 1;
+        record_guess(1);
+    });
+});
+
+
+$(function() {
+    $('#guess-question-only #vote_button_2').click(function() {
+        opinion_ready = 1;
+        current_opinion = -1;
+        record_guess(2);
+    });
+});
 
 
 function show_peer_scores()
 {
-    if(q1_answered == 1 && q2_answered == 1 && q3_answered ==1)
+    if(q1_answered == 1 && q2_answered == 1 && q3_answered ==1 && q4_answered==1 && q5_answered==1)
     {
-        $("#peer-scores").removeAttr("hidden")
+        // $("#survey").attr("hidden", "true")
+        $("#survey").fadeOut('slow')
 
+        $("#peer-scores").removeAttr("hidden")
 
         $.ajax({
             url: '/record_survey_result',
             data: {q1_answer : JSON.stringify(q1_answer),
                     q2_answer: JSON.stringify(q2_answer),
                     q3_answer : JSON.stringify(q3_answer),
+                    q4_answer : JSON.stringify(q4_answer),
+                    q5_answer : JSON.stringify(q5_answer),
 
             },
 
@@ -93,28 +172,6 @@ function show_peer_scores()
 }
 
 
-$(function() {
-    $('#vote_button_1').click(function() {
-        $("#image_1_score").html(images[current_pair].image_1_score);
-        $("#image_2_score").html(images[current_pair].image_2_score);
-        $("#image_1_caption").css('visibility', 'visible');
-        $("#image_2_caption").css('visibility', 'visible');
-        disable_buttons();
-        grade_result(1);
-    });
-});
-
-
-$(function() {
-    $('#vote_button_2').click(function() {
-        $("#image_1_score").html(images[current_pair].image_1_score);
-        $("#image_2_score").html(images[current_pair].image_2_score);
-        $("#image_1_caption").css('visibility', 'visible');
-        $("#image_2_caption").css('visibility', 'visible');
-        disable_buttons();
-        grade_result(2);
-    });
-});
 
 
 
@@ -139,6 +196,7 @@ var images;
 var num_correct;
 
 var user_choices = [];
+var user_opinions = [];
 
 var user_choice_correct = [];
 
@@ -165,7 +223,7 @@ $(document).ready(function(){
     })
 
 
-if(window.location.pathname == '/render_game')
+if(window.location.pathname == '/')
 { 
     console.log("hi")
     $.ajax({
@@ -238,10 +296,10 @@ function display_image_data()
     }
 
     
-    $("#image_1_caption").css('visibility', 'hidden')
+    $("#image_1_score").css('visibility', 'hidden')
     $("#vote_button_1").prop('disabled', false);
 
-    $("#image_2_caption").css('visibility', 'hidden')
+    $("#image_2_score").css('visibility', 'hidden')
     $("#vote_button_2").prop('disabled', false);
 
     $("#image_1").css("opacity","1")
@@ -273,14 +331,47 @@ function advance_images(){
     update_images()
 }
 
+var opinion_ready = 0
+var guess_ready = 0
 
-function grade_result(user_choice)
+var current_opinion = 0
+var current_guess = 0
+
+function record_opinion(user_opinion)
 {
-    // console.log(json_data)
-    // console.log(user_choice)
-    user_choices.push(user_choice)
+    current_opinion = user_opinion
+    opinion_ready = 1
 
-    console.log(user_choices)
+    grade_result()
+}
+
+function record_guess(user_choice)
+{
+    guess_ready = 1
+    current_guess = user_choice
+
+    grade_result()
+}
+
+
+function grade_result()
+{
+
+    if(opinion_ready == 0 || guess_ready == 0)
+    {
+        return
+    }
+
+    $("#image_1_score").html(images[current_pair].image_1_score);
+    $("#image_2_score").html(images[current_pair].image_2_score);
+    $("#image_1_score").css('visibility', 'visible');
+    $("#image_2_score").css('visibility', 'visible');
+    disable_buttons();
+
+    user_choices.push(current_guess)
+    user_opinions.push(current_opinion)
+
+    user_choice = current_guess
 
     var correct_answer;
     if(images[current_pair].image_1_score >= images[current_pair].image_2_score)
@@ -356,7 +447,8 @@ function grade_result(user_choice)
                     user_choice_correct: JSON.stringify(user_choice_correct),
                     image_1_reddit_ids : JSON.stringify(image_1_reddit_id),
                     image_2_reddit_ids : JSON.stringify(image_2_reddit_id), 
-                    current_subreddit : JSON.stringify(current_subreddit)
+                    current_subreddit : JSON.stringify(current_subreddit),
+                    opinion_votes: JSON.stringify(user_opinions)
 
             },
             success : function(){
@@ -368,7 +460,7 @@ function grade_result(user_choice)
     }
     else
     {
-        setTimeout(advance_images, 1500)
+        setTimeout(advance_images, 100)
     }
 
     
@@ -388,15 +480,22 @@ function disable_buttons()
 
 function enable_buttons(json_data)
 {
-    $("#feedback_symbol").css('visibility','hidden')
-    $("#next_button").html("Skip Pair")
-    $("#next_button").attr("class","btn btn-warning")
     $("#vote_button_1").attr("class","btn btn-info")
-    $("#vote_button_1").html("More popular")
+    $("#vote_button_1").html("Left image")
     $("#vote_button_2").attr("class","btn btn-info")
-    $("#vote_button_2").html("More popular")
+    $("#vote_button_2").html("Right")
 
-    $("#num_remaining").html(total_questions - current_pair)
+    // $("#num_remaining").html(total_questions - current_pair)
+    $("#num_remaining").html(current_pair + 1)
+        
+
+    $('#opinion_button_1').removeClass('btn-warning').addClass('btn-success ');
+    $('#opinion_button_2').removeClass('btn-warning').addClass('btn-success ');
+
+    opinion_ready = 0
+    guess_ready = 0
+
+
 
     // $("#num_remaining").html(json_data['num_remaining'])
 }

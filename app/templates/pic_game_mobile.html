@@ -4,18 +4,17 @@
 {% block intro_text %}
 
 <!-- <div class="container"> -->
-
-
-<p class="subreddit-text">
-These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}}</a>.</p>
-
-<p class="more-popular-text"> Which was more popular? </p>
-
-<div class='row'>
+<!-- <div class='row'>
     <div class="col-xs-12">
       <p  class="text-main"> <span id="num_remaining" >{{num_remaining}}</span> pairs remaining</p> 
-    <!-- </div> -->
 </div>
+ -->
+<p class="subreddit-text">
+These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}} </a> (<span id="num_remaining">{{num_remaining}}</span>/10)</p>
+
+<!-- <p class="more-popular-text"> Which was more popular? </p>
+ -->
+
 
 {%endblock %}
 
@@ -28,38 +27,23 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 
 
 
-
-<!-- <div class='container '> -->
 <div class="row">      
 
-    <div class="col-md-6 col-xs-6">     
-            
-      <div class="caption">
-         <h2 id="image_1_caption" class="text-main" style="visibility: hidden">  Karma: <span id="image_1_score" ></span> </h2>
-      </div>
-      <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="vote_button_1" class="btn btn-info"> More popular </button>
-      </div>
+    <div class="col-md-6 col-xs-6">
+
       <div class="title_container">
            <span id="image_1_title" class="image_title"> {{image_1_title}}</span> 
-      </div>
+      </div>     
       <div class="image_container">
         <a id='image_1_link' data-lightbox="image_1" href="">   
         <img class="img-responsive" id='image_1'  src=""  /> </a>
       </div>
-      <!-- <img class="img-gtk" id='image_1'  src={{image_1_src}}  /> </a> -->
 
     </div>
 
 
 
     <div class="col-md-6 col-xs-6">
-        <div class="caption">
-          <h2 id="image_2_caption" class="text-main" style="visibility: hidden"> Karma: <span id="image_2_score" ></span> </h2>
-        </div>
-        <div class="btn-group-vertical btn-block btn-group-lg">
-          <button type="button" id="vote_button_2" class="btn btn-info"> More popular </button>
-        </div>
         <div class="title_container">
           <span id="image_2_title" class="image_title"> {{image_2_title}} </span>
         </div>
@@ -67,9 +51,105 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
           <a id='image_2_link' data-lightbox="image_2" href="">   
           <img class="img-responsive" id='image_2' src="" /> </a>
         </div>
-        <!-- <img class="img-gtk" id='image_2' src={{image_2_src}} /> </a> -->
     </div>
+</div>
+
+<hr>
+
+{% if ask_opinion %}
+<div class="row">
+<div class="col-xs-12">
+  <p class="text-left more-popular-text"> Which do you think is better? </p>
+</div>
+</div>
+
+
+<div class="row">      
+
+    <div class="col-xs-6">     
+      <div class="btn-group-vertical btn-block btn-group-lg">
+        <button type="button" id="opinion_button_1" class="btn btn-info"> Left image </button>
+      </div>
+     
+    </div>
+
+    <div class="col-xs-6">
+        <div class="btn-group-vertical btn-block btn-group-lg">
+          <button type="button" id="opinion_button_2" class="btn btn-info"> Right image </button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+<div class="col-xs-12">
+  <p class="more-popular-text"> Which do you think received more upvotes? </p>
+</div>
+</div>
+
+<div class="row">      
+
+    <div class="col-md-6 col-xs-6">     
+            
+
+      <div class="btn-group-vertical btn-block btn-group-lg">
+        <button type="button" id="vote_button_1" class="btn btn-info"> Left image </button>
+      </div>
+
+    </div>
+
+    <div class="col-md-6 col-xs-6">
+        
+        <div class="btn-group-vertical btn-block btn-group-lg">
+          <button type="button" id="vote_button_2" class="btn btn-info"> Right image</button>
+        </div>
+
+
+    </div>
+</div>
+{% else %}
+<div class="container" id="guess-question-only">
+<div class="row">
+<div class="col-xs-12">
+  <p class="more-popular-text"> Which do you think received more upvotes? </p>
+</div>
+</div>
+
+<div class="row" >       
+    <div class="col-md-6 col-xs-6">     
+            
+
+      <div class="btn-group-vertical btn-block btn-group-lg">
+        <button type="button" id="vote_button_1" class="btn btn-info"> Left image </button>
+      </div>
+
+    </div>
+
+    <div class="col-md-6 col-xs-6">
+        
+        <div class="btn-group-vertical btn-block btn-group-lg">
+          <button type="button" id="vote_button_2" class="btn btn-info"> Right image</button>
+        </div>
+
+
+    </div>
+</div>
+{% endif %}
+
+
+<div class="row">
+<div class="score_text">
+  <div class="col-xs-6 "> 
+         <span id="image_1_caption" >  Upvotes: <span id="image_1_score" style="visibility:hidden" ></span> </span>
   </div>
+  <div class="col-xs-6">
+        <span id="image_2_caption" > Upvotes: <span id="image_2_score" style="visibility: hidden" ></span> </span>
+  </div>
+  </div>
+</div>
+</div>
+
 <!-- </div> -->
 <br><br>
 

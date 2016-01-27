@@ -5,10 +5,11 @@ from flask import Blueprint, render_template, request, make_response, jsonify,ur
 import json
 import os
 import uuid
+import md5
 from scipy import stats
 
 
-from models import Post, Vote, User, SurveyResult, UserScore, Quiz, Quiz_to_ImagePair, ImagePair
+from models import Post, Vote, User, SurveyResult, UserScore, Quiz, Quiz_to_ImagePair, ImagePair, OpinionVote
 from forms import SurveyForm
 from app import db
 from app import app
@@ -31,10 +32,15 @@ def record_survey():
     q1 = json.loads(request.args['q1_answer'])
     q2 = json.loads(request.args['q2_answer'])
     q3 = json.loads(request.args['q3_answer'])
+    q4 = json.loads(request.args['q4_answer'])
+    q5 = json.loads(request.args['q5_answer'])
+
 
     s = SurveyResult(frequency_of_use = str(q1),
                         length_of_use = str(q2),
                         use_subreddit=str(q3),
+                        vote_on_posts=str(q4),
+                        browse_new_queue = str(q5),
                         user_id = current_uuid,
                         subreddit=str(subreddit)
                         )
@@ -47,25 +53,52 @@ def record_survey():
 
 @predict_game.route('/record_all_votes', methods=['POST', 'GET'])
 def record_all_votes():
+    print 'record all votes called'
     current_uuid = get_uuid_from_cookie(request.cookies)
-    # print request.args.get('images')
     
 
     current_subreddit = json.loads(request.args['current_subreddit'])
 
     user_choices = json.loads(request.args['votes'])
+    user_opinions = json.loads(request.args['opinion_votes'])
+
+    print user_opinions
+
     user_correct = json.loads(request.args['user_choice_correct'])
     image_1_reddit_ids = json.loads(request.args['image_1_reddit_ids'])
     image_2_reddit_ids = json.loads(request.args['image_2_reddit_ids'])
 
     if len(user_choices) != len(user_correct) or len(user_correct) != len(image_1_reddit_ids) or len(image_1_reddit_ids) != len(image_2_reddit_ids):
+        print 'here'
         return 'ok'
+
+
+
+
+
 
     num_correct = 0
     num_wrong = 0
+
+
+
     for i in range(len(user_choices)):
         new_vote = Vote(current_uuid, image_1_reddit_ids[i], image_2_reddit_ids[i], user_choices[i], user_correct[i])
+        
+
         db.session.add(new_vote)
+        db.session.commit()
+
+        
+        new_opinion_vote = OpinionVote()
+        new_opinion_vote.user_id = current_uuid
+        new_opinion_vote.user_choice = user_opinions[i] 
+        new_opinion_vote.post_id_1 = image_1_reddit_ids[i]
+        new_opinion_vote.post_id_2 = image_2_reddit_ids[i]
+        new_opinion_vote.vote_id = new_vote.id
+
+        db.session.add(new_opinion_vote)
+
         if user_correct[i] == 1:
             num_correct += 1
         else:
@@ -190,27 +223,62 @@ def get_new_quiz(uuid, subreddit):
     return chosen_quiz.id, chosen_quiz.num_questions
 
 
+# Generic class to get experiment assignment off of uuid by taking md5 of that value
+# The hope here is that users will always be assigned to same treatment if they retain their cookie
+def get_experimental_params(current_uuid):
+    m = md5.new()
+    m.update(current_uuid)
+
+    ## Mod out by 100 to split the range... should be a better way to do this but ... 
+    x = int(m.hexdigest(),16) % 100
+
+    experiment_params = {}
+
+    if x < 25:
+        experiment_params['ask_opinion'] = False
+    else:
+        experiment_params['ask_opinion'] = True
+
+    return experiment_params
 
 
 
-@predict_game.route('/render_game')
+@predict_game.route('/')
 def start_game():
+
+    print 'referrer is', request.referrer
+
     sub_param = request.args.get('article_source')
     [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
 
     current_uuid = get_uuid_from_cookie(request.cookies)
+    query_1 = User.query.filter_by(uuid=current_uuid).first()
+    if query_1 is None:
+        current_user = User()
+        current_user.uuid = current_uuid
+        current_user.original_referrer = str(request.referrer)
+        db.session.add(current_user)
+        db.session.commit()
+
+
 
     quiz_id, num_questions = get_new_quiz(current_uuid, subreddit)
+
+
+    experiment_params = get_experimental_params(current_uuid)
+
+
 
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
+        ask_opinion = experiment_params['ask_opinion']
         )
     )
 
     
-    response.set_cookie(UUID_NAME, current_uuid)
+    response.set_cookie(UUID_NAME, current_uuid, max_age=MAX_COOKIE_AGE)
     response.set_cookie('num_questions',str(num_questions))
     response.set_cookie('subreddit',subreddit)
     response.set_cookie('quiz_id', str(quiz_id))
@@ -221,6 +289,7 @@ def start_game():
 
 @predict_game.route('/end_game')
 def end_game():
+
     current_uuid = get_uuid_from_cookie(request.cookies)
     current_subreddit = get_current_subreddit(request.cookies)
     [current_subreddit, pic_source_url, pic_source_name] = get_subreddit_info(current_subreddit)
@@ -245,7 +314,6 @@ def end_game():
         title="Reddit Use"))
 
 
-
     return response
 
 def get_score_distribution_mean(subreddit, user_score=None):
@@ -266,15 +334,6 @@ def get_score_distribution_mean(subreddit, user_score=None):
 
     return np.mean(all_scores)
 
-
-def get_current_user(cookie_uuid, subreddit=None):
-    current_user = User.query.get(cookie_uuid)
-    if current_user is None:
-        new_user = User(uuid=cookie_uuid)
-        db.session.add(new_user)
-        db.session.commit()    
-        return new_user
-    return current_user
 
 def make_new_score():
     num_questions = 10 # randomize this later
@@ -390,12 +449,12 @@ def get_subreddit_info(subreddit=None):
     return [subreddit, pic_source_url, pic_source_name]
 
 
-@predict_game.route('/')
-def index():
-    response = redirect(url_for('.start_game'))
-    current_uuid = get_uuid_from_cookie(request.cookies)
-    response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
-    return response
+# @predict_game.route('/')
+# def index():
+#     response = redirect(url_for('.start_game'))
+#     current_uuid = get_uuid_from_cookie(request.cookies)
+#     response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
+#     return response
     # return "hi"
 
 @predict_game.route('/about')
