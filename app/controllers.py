@@ -282,6 +282,8 @@ def start_game():
     print 'opinion_first', opinion_first
     if opinion_first is None:
         opinion_first = True
+    if opinion_first == "False":
+        opinion_first = False
 
 
     response = make_response( render_template('pic_game_mobile.html', 
