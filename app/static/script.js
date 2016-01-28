@@ -379,7 +379,7 @@ function record_opinion(user_opinion)
 {
     console.log("record_opinion called")
     current_opinion = user_opinion
-
+    user_opinions.push(current_opinion)
     opinion_ready = 1
 
     grade_result()
@@ -389,6 +389,8 @@ function record_guess(user_choice, callback)
 {
     guess_ready = 1
     current_guess = user_choice
+
+    user_choices.push(current_guess)
 
     $("#image_1_score").html(images[current_pair].image_1_score);
     $("#image_2_score").html(images[current_pair].image_2_score);

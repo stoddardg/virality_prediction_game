@@ -48,12 +48,12 @@ def record_survey():
     db.session.commit()
 
 
-    print current_uuid, q1, q2, q3
+    # print current_uuid, q1, q2, q3
     return "ok"
 
 @predict_game.route('/record_all_votes', methods=['POST', 'GET'])
 def record_all_votes():
-    print 'record all votes called'
+    # print 'record all votes called'
     current_uuid = get_uuid_from_cookie(request.cookies)
     
 
@@ -62,12 +62,20 @@ def record_all_votes():
     user_choices = json.loads(request.args['votes'])
     user_opinions = json.loads(request.args['opinion_votes'])
 
-    print user_opinions
 
     user_correct = json.loads(request.args['user_choice_correct'])
     image_1_reddit_ids = json.loads(request.args['image_1_reddit_ids'])
     image_2_reddit_ids = json.loads(request.args['image_2_reddit_ids'])
 
+
+    # print 'user_choices', user_choices
+    # print 'user_correct',user_correct
+    # print 'image_1_reddit_ids', image_1_reddit_ids
+    # print 'user_opinions', user_opinions
+
+
+
+    # TODO: I should really do some better error checking here
     if len(user_choices) != len(user_correct) or len(user_correct) != len(image_1_reddit_ids) or len(image_1_reddit_ids) != len(image_2_reddit_ids):
         print 'here'
         return 'ok'
@@ -122,6 +130,9 @@ def record_all_votes():
 
     response_data = {}
     response_data['status'] = 'OK'
+
+
+    print 'num_correct,num_wrong', num_correct, num_wrong
 
     response = jsonify(response_data)
     response.set_cookie('percent_correct', str(format_percentage(num_correct, num_wrong)))
