@@ -3,17 +3,9 @@
 
 {% block intro_text %}
 
-<!-- <div class="container"> -->
-<!-- <div class='row'>
-    <div class="col-xs-12">
-      <p  class="text-main"> <span id="num_remaining" >{{num_remaining}}</span> pairs remaining</p> 
-</div>
- -->
 <p class="subreddit-text">
 These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}} </a> (<span id="num_remaining">{{num_remaining}}</span>/10)</p>
 
-<!-- <p class="more-popular-text"> Which was more popular? </p>
- -->
 
 
 {%endblock %}
@@ -25,7 +17,7 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
   ...
 </a> -->
 
-
+<div class="container">
 
 <div class="row">      
 
@@ -57,10 +49,10 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 <hr>
 
 {% if opinion_first %}
-<div class="container" id="opinion_question_first">
+<div  id="opinion_question_first">
 
 
-<div class="container" id="opinion_question">
+<div id="opinion_question">
 <div class="row">
 <div class="col-xs-12">
   <p class="opinion-text"> In your opinion, which image is better?</p>
@@ -86,7 +78,7 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 </div>
 
 
-<div class="container" id="prediction_question" style="visibility:hidden">
+<div id="prediction_question" style="display:none">
 <div class="row">
 <div class="col-xs-12">
   <p class="more-popular-text"> Guess which image received more upvotes on Reddit.</p>
@@ -122,17 +114,15 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
   </div>
   </div>
 </div>
-</div>
-
 
 </div>
 
-</div>
+
 {% elif ask_opinion %}
 
-<div class="container" id="guess_question_first">
+<div id="guess_question_first">
 
-<div class="container" id="prediction_question" >
+<div id="prediction_question" >
 
 <div class="row">
 <div class="col-xs-12">
@@ -170,7 +160,7 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
   </div>
 </div>
 
-<div class="container" id="opinion_question" style="visibility:hidden">
+<div  id="opinion_question" style="display:none">
 <div class="row">
 <div class="col-xs-12">
   <p class="opinion-text"> In your opinion, which image is better?</p>
@@ -200,14 +190,10 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 
 
 </div>
-
-</div>
-
-
 
 {% else %}
 
-<div class="container" id="guess-question-only">
+<div  id="guess-question-only">
 <div class="row">
 <div class="col-xs-12">
   <p class="more-popular-text"> Which do you think received more upvotes? </p>
@@ -250,7 +236,7 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 
 {% endif %}
 
-
+</div>
 
 
 <!-- </div> -->
