@@ -297,20 +297,39 @@ if(window.location.pathname == '/')
 
 });
 
+$( window ).resize(function() {
+  resize_images_and_title()
+});
 
-function display_image_data()
+
+function resize_images_and_title()
 {
-    if( image_1_loaded == 0)
-    {
-        return
-    }
-    if(image_2_loaded == 0)
-    {
-        return
-    }
-    console.log("display image data ready to go")
+
+
 
     $(".title_container").css("height", "")
+    $("#outer_image_container").css("height","1000px")
+    $("#image_row").css("height","1000px")
+    $(".image_column").css("height","1000px")
+    $(".image_title_container").css("height","1000px")
+    $(".image_container").css("height", "1000px")
+
+
+    console.log("outer_image_container height " + $("#outer_image_container").height())
+
+
+
+    var current_page_height = $(window).height()
+    console.log(current_page_height)
+
+
+    max_image_height = Math.min( current_page_height/2, Math.max($("#image_1").height(), $("#image_2").height())   )
+    $(".image_container").css("height", max_image_height+"px")
+
+
+
+
+
 
 
     $("#image_1_link").attr('href', images[current_pair].image_1_lightbox_src)
@@ -333,6 +352,19 @@ function display_image_data()
     $(".title_container").css("height", (max_title_height+1)+"px")
 
 
+    container_height = max_title_height + max_image_height
+
+    $("#outer_image_container").css("height", container_height+"px")
+    $("#image_row").css("height", container_height+"px")
+    $(".image_column").css("height", container_height+"px")
+    $(".image_title_container").css("height", container_height+"px")
+
+    console.log("container_height " + container_height)
+
+
+
+
+
     console.log("max title height " + max_title_height)
     while( image_1_title_height >= max_title_height)
     {
@@ -347,6 +379,98 @@ function display_image_data()
         image_2_title.css("font-size", (font_size -1) + "px")
         image_2_title_height = image_2_title.height()
     }
+
+}
+
+function display_image_data()
+{
+
+    if( image_1_loaded == 0)
+    {
+        return
+    }
+    if(image_2_loaded == 0)
+    {
+        return
+    }
+
+    resize_images_and_title()
+    // console.log("display image data ready to go")
+
+
+
+    // $(".title_container").css("height", "")
+    // $("#outer_image_container").css("height","1000px")
+    // $("#image_row").css("height","1000px")
+    // $(".image_column").css("height","1000px")
+    // $(".image_title_container").css("height","1000px")
+    // $(".image_container").css("height", "1000px")
+
+
+    // console.log("outer_image_container height " + $("#outer_image_container").height())
+
+
+
+    // var current_page_height = $(window).height()
+    // console.log(current_page_height)
+
+
+    // max_image_height = Math.min( current_page_height/2, Math.max($("#image_1").height(), $("#image_2").height())   )
+    // $(".image_container").css("height", max_image_height+"px")
+
+
+
+
+
+
+
+    // $("#image_1_link").attr('href', images[current_pair].image_1_lightbox_src)
+    // $("#image_1_title").css("font-size","")
+    // $("#image_1_title").html(images[current_pair].image_1_title)
+
+    // $("#image_2_link").attr('href', images[current_pair].image_2_lightbox_src)
+    // $("#image_2_title").css("font-size","")
+    // $("#image_2_title").html(images[current_pair].image_2_title)
+
+
+    // image_1_title = $("#image_1_title")
+    // image_1_title_height = image_1_title.height()
+    
+    // image_2_title = $("#image_2_title")
+    // image_2_title_height =  image_2_title.height()
+
+
+    // max_title_height = Math.min($(".title_container").height(), Math.max(image_1_title_height, image_2_title_height))
+    // $(".title_container").css("height", (max_title_height+1)+"px")
+
+
+    // container_height = max_title_height + max_image_height
+
+    // $("#outer_image_container").css("height", container_height+"px")
+    // $("#image_row").css("height", container_height+"px")
+    // $(".image_column").css("height", container_height+"px")
+    // $(".image_title_container").css("height", container_height+"px")
+
+    // console.log("container_height " + container_height)
+
+
+
+
+
+    // console.log("max title height " + max_title_height)
+    // while( image_1_title_height >= max_title_height)
+    // {
+    //     var font_size = parseFloat($("#image_1_title").css("font-size"))
+    //     image_1_title.css("font-size", (font_size -1) + "px")
+    //     image_1_title_height = image_1_title.height()
+    // }
+
+    // while( image_2_title_height >= max_title_height)
+    // {
+    //     var font_size = parseFloat($("#image_2_title").css("font-size"))
+    //     image_2_title.css("font-size", (font_size -1) + "px")
+    //     image_2_title_height = image_2_title.height()
+    // }
 
     
     $("#image_1_score").css('visibility', 'hidden')

@@ -1,3 +1,8 @@
+/*
+ * Row with equal height columns
+ * --------------------------------------------------
+ */
+
 hr
 {
     border: 2px solid #000;
@@ -176,16 +181,29 @@ background-color: rgb(22, 105, 173);
 
 
 .image_container {
-height: 400px;
+height: 1000px;
 padding-top: 10px;
 
 }
+
+#image_row{
+  height: 1000px;
+}
+#image_column{
+  height: 1000px
+}
+
+
 
 .score_text {
   text-align: center;
   font-size:200%;
 }
 
+#outer_image_container{
+  padding-bottom: :10px;
+  height:1000px;
+}
 
 
 .image_container  .img-responsive {
