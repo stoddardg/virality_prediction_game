@@ -86,25 +86,23 @@ $(function() {
 
 
 $(function() {
-    $('#opinion_button_1').click(function() {
-        $('#opinion_button_2').removeClass('btn-warning').addClass('btn-success ');
+    $('#opinion_question_first #opinion_button_1').click(function() {
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_opinion(1)
-        $("#both_questions_container #opinion_question").fadeOut("slow", function(){
-        $("#both_questions_container #prediction_question").css("visibility","visible").hide().fadeIn("slow")
+        $("#opinion_question_first #opinion_question").fadeOut("slow", function(){
+        $("#opinion_question_first #prediction_question").css("visibility","visible").hide().fadeIn("slow")
     })
 
     });
 });
 
 $(function() {
-    $('#opinion_button_2').click(function() {
+    $('#opinion_question_first #opinion_button_2').click(function() {
         console.log("2 hi")
-        $('#opinion_button_1').removeClass('btn-warning').addClass('btn-success ');
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_opinion(2)
-        $("#both_questions_container #opinion_question").fadeOut("slow", function(){
-        $("#both_questions_container #prediction_question").css("visibility","visible").hide().fadeIn("slow")
+        $("#opinion_question_first #opinion_question").fadeOut("slow", function(){
+        $("#opinion_question_first #prediction_question").css("visibility","visible").hide().fadeIn("slow")
     })
 
 
@@ -112,8 +110,12 @@ $(function() {
 });
 
 
+
+
+
+
 $(function() {
-    $('#vote_button_1').click(function() {
+    $('#opinion_question_first #vote_button_1').click(function() {
         $('#vote_button_2').removeClass('btn-warning').addClass('btn-success ');
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_guess(1);
@@ -122,7 +124,7 @@ $(function() {
 
 
 $(function() {
-    $('#vote_button_2').click(function() {
+    $('#opinion_question_first #vote_button_2').click(function() {
         $('#vote_button_1').removeClass('btn-warning').addClass('btn-success ');
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_guess(2);
@@ -131,8 +133,56 @@ $(function() {
 
 
 $(function() {
+    $('#guess_question_first #opinion_button_1').click(function() {
+        $(this).addClass('btn-warning').removeClass('btn-success ');
+        $("#guess_question_first #opinion_question").fadeOut("slow", function(){
+            record_opinion(1)
+        })
+
+    
+    });
+});
+
+$(function() {
+    $('#guess_question_first #opinion_button_2').click(function() {
+        $(this).addClass('btn-warning').removeClass('btn-success ');
+        console.log("WOOOOO2")
+        $("#guess_question_first #opinion_question").fadeOut("slow", function(){
+            record_opinion(2)
+        })
+        // record_opinion(2)
+
+
+    });
+});
+
+$(function() {
+    $('#guess_question_first #vote_button_1').click(function() {
+        record_guess(1,function(){
+        $("#guess_question_first #prediction_question").fadeOut("slow", function(){
+        $("#guess_question_first #opinion_question").css("visibility","visible").hide().fadeIn("fast")
+    })
+    })
+
+    });
+});
+
+
+$(function() {
+    $('#guess_question_first #vote_button_2').click(function() {
+        record_guess(2,function(){
+        $("#guess_question_first #prediction_question").fadeOut("slow", function(){
+        $("#guess_question_first #opinion_question").css("visibility","visible").hide().fadeIn("fast")
+    })
+    })
+    });
+});
+
+
+
+
+$(function() {
     $('#guess-question-only #vote_button_1').click(function() {
-        console.log("WOO")
         current_opinion = -1;
         opinion_ready = 1;
         record_guess(1);
@@ -250,7 +300,6 @@ if(window.location.pathname == '/')
 
 function display_image_data()
 {
-    console.log("display image data called")
     if( image_1_loaded == 0)
     {
         return
@@ -315,21 +364,6 @@ function display_image_data()
 
 
 
-
-function click_next_button(){
-    if(next_button_clicked == 0)
-    {    
-        // $("#next_button").click()
-      
-        next_button_clicked = 1
-        $.ajax({
-            url: '/get_next_images',
-            success: update_images
-        })
-        next_button_clicked = 1
-    }
-}
-
 function advance_images(){
     current_pair = current_pair + 1
     update_images()
@@ -343,37 +377,24 @@ var current_guess = 0
 
 function record_opinion(user_opinion)
 {
+    console.log("record_opinion called")
     current_opinion = user_opinion
+
     opinion_ready = 1
 
     grade_result()
 }
 
-function record_guess(user_choice)
+function record_guess(user_choice, callback)
 {
     guess_ready = 1
     current_guess = user_choice
-
-    grade_result()
-}
-
-
-function grade_result()
-{
-
-    if(opinion_ready == 0 || guess_ready == 0)
-    {
-        return
-    }
 
     $("#image_1_score").html(images[current_pair].image_1_score);
     $("#image_2_score").html(images[current_pair].image_2_score);
     $("#image_1_score").css('visibility', 'visible');
     $("#image_2_score").css('visibility', 'visible');
-    disable_buttons();
 
-    user_choices.push(current_guess)
-    user_opinions.push(current_opinion)
 
     user_choice = current_guess
 
@@ -436,13 +457,32 @@ function grade_result()
 
 
     }
+
+
+    // grade_result()
+    setTimeout(function(){
+        grade_result()
+        callback()}, 1500)
+}
+
+
+function grade_result()
+{
+
+    if(opinion_ready == 0 || guess_ready == 0)
+    {
+        return
+    }
+
+    disable_buttons();
+
+
     
     var end_of_game = 0;
     if(current_pair == total_questions - 1)
     {
         end_of_game = 1
     }
-    console.log(JSON.stringify(user_choices))
     if(end_of_game ==1 )
     {
         $.ajax({
@@ -464,7 +504,8 @@ function grade_result()
     }
     else
     {
-        setTimeout(advance_images, 1500)
+        advance_images()
+        // setTimeout(advance_images, 1500)
     }
 
     
@@ -499,8 +540,14 @@ function enable_buttons(json_data)
     opinion_ready = 0
     guess_ready = 0
 
-    $("#both_questions_container #opinion_question").css("visibility","visible").fadeIn()
-    $("#both_questions_container #prediction_question").css("visibility","hidden")
+
+    $("#opinion_question_first #opinion_question").css("visibility","visible").hide().fadeIn(0)
+    $("#opinion_question_first #prediction_question").css("visibility","hidden")
+
+
+    $("#guess_question_first #prediction_question").css("visibility","visible").hide().fadeIn(0)
+    $("#guess_question_first #opinion_question").css("visibility","hidden")
+
 
     // $("#num_remaining").html(json_data['num_remaining'])
 }

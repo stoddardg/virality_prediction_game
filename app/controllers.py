@@ -246,7 +246,6 @@ def get_experimental_params(current_uuid):
 @predict_game.route('/')
 def start_game():
 
-    print 'referrer is', request.referrer
 
     sub_param = request.args.get('article_source')
     [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
@@ -268,12 +267,17 @@ def start_game():
 
     experiment_params = get_experimental_params(current_uuid)
 
+    opinion_first = request.args.get('opinion_first')
+    print 'opinion_first', opinion_first
+    if opinion_first is None:
+        opinion_first = True
 
 
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
         # ask_opinion = experiment_params['ask_opinion']
+        opinion_first = opinion_first,
         ask_opinion = True
         )
     )
