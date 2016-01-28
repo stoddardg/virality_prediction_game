@@ -323,7 +323,7 @@ function resize_images_and_title()
     console.log(current_page_height)
 
 
-    max_image_height = Math.min( current_page_height/2, Math.max($("#image_1").height(), $("#image_2").height())   )
+    max_image_height = Math.min( current_page_height*.333, Math.max($("#image_1").height(), $("#image_2").height())   )
     $(".image_container").css("height", max_image_height+"px")
 
 
