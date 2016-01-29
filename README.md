@@ -1,4 +1,4 @@
-# Guess the Karma server code
+# Guess the Karma 
 
 This very messy directory contains all the code to run your own version of www.guessthekarma.com (or hopefully it does). 
 
