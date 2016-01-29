@@ -5,88 +5,53 @@ from imgurpython.helpers.error import ImgurClientError
 
 import config
 from app import db
-from app.models import Post
+from app.models import Post,ImagePair, Quiz, Quiz_to_ImagePair
 from sqlalchemy.exc import IntegrityError
 
 
-def check_image(image_url, client):
-    
-    pos = image_url.rfind('/')
-    temp = image_url[pos+1:]
-    
-    #indicates the url has an extension
-    if temp.find('.') != -1:
-        image_id = temp[:temp.find('.')]
-        has_extension = True
-    else:
-        image_id = temp
-        has_extension = False
-    
-    if has_extension == True:
-        try:
-            image = client.get_image(image_id)
-        except ImgurClientError as e:
-            return 'bad_link' 
-    else:
-        try:
-            album = client.get_album(image_id)
-            is_gallery = True
-        except:
-            is_gallery = False
+def import_quiz(filename):
+    quiz_df = pandas.read_csv(filename)
+    for quiz_id, data in quiz_df.groupby('quiz_id'):
+        print quiz_id
 
-        if is_gallery == True:
-            return 'bad_link'
-        
-        try:
-            image = client.get_image(image_id)
-        except ImgurClientError as e:
-            return 'bad_link' 
-    
-    if image is None:
-        return 'bad_link'
-    
-    if image.nsfw == True:
-        return 'bad_link'
-    
-    if image.type == 'image/gif':
-        return 'bad_link' 
-    
-    return image.link
+        subreddit = data.subreddit.min()
+        num_questions = len(data) / 2
+        #Create a new quiz
 
-def populate_table(datafile, sample_size=1000):
-    # imgur_client_id = 'my_id'
-    # imgur_client_secret = 'my_secret'
+        new_quiz = Quiz(subreddit=subreddit, num_questions=10)
+        db.session.add(new_quiz)
+        db.session.commit()
 
-    imgur_client_id = config.IMGUR_CLIENT_ID
-    imgur_client_secret = config.IMGUR_SECRET_KEY
+        for pair_id, images in data.groupby('question_id'):
+            image_dict = images.to_dict(orient='records')
+            posts = []
+            for image in image_dict:
 
+                """ First check if the post is in the database already"""
 
+                query_1 = Post.query.filter(Post.reddit_id==image['id'])
 
-    client = imgurpython.ImgurClient(imgur_client_id, imgur_client_secret)
-
-    num_processed = 0 
-
-    df = pandas.read_csv(datafile)
-
-
-    for row in df.sample(sample_size).iterrows():
-        data = row[1]
-        new_link = check_image(data['url'], client)
-        if new_link == 'bad_link':
-            print 'bad link'
-            continue
-        p = Post(new_link, data.title, data.score, data.id, data.subreddit, data.year, data.month)
-        try:
-            db.session.add(p)
+                if len(query_1.all()) > 0 :
+                    p = query_1.first()
+                else:
+                    p = Post(image['url'], image['title'], image['score'], image['id'], subreddit, 
+                             image['year'],image['month'])
+                    db.session.add(p)
+                    db.session.commit()
+                posts.append(p)
+            image_pair = ImagePair(image_1_id = posts[0].id, image_2_id = posts[1].id)
+            db.session.add(image_pair)
             db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            continue
+
+
+            quiz_to_image_pair = Quiz_to_ImagePair(quiz_id = new_quiz.id, image_pair_id = image_pair.id)
+            db.session.add(quiz_to_image_pair)
+            db.session.commit()
         
 
 
 if __name__=='__main__':
-    populate_table('pics_2014_random_sample.csv.gz', sample_size=500)
+    import_quiz('raw_script_data/script_data.csv.gz')
 
 
 
