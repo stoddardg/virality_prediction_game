@@ -3,7 +3,15 @@
 This very messy directory contains all the code to run your own version of www.guessthekarma.com (or hopefully it does). 
 
 ## Installation
-I use conda as my package and environment manager. To create the environment and load all the python packages associated with this project, use this command: 
+
+First, grab this repo with 
+```
+git clone https://github.com/stoddardg/virality_prediction_game.git
+```
+
+Now you should have the code, so time to actually install things. 
+
+First step is to create a virtual environment and install all the necessary packages. I use conda as my package and environment manager. To create the environment and load all the python packages associated with this project, use this command: 
 
 ``` 
 conda env create -f environment.yml
