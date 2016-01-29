@@ -35,5 +35,14 @@ If that works, you can now run the server with
 ```
 python run.py
 ```
+After running that, you should see a bunch of lines, and one of them should look like this: 
+```
+* Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+```
+
+Just point your browser to that url and you should be good to go!
+
+
+
 
 If things don't work, there are two immediate things to make sure. First, make sure your the virtual environment is activated. Second, make sure that your instance of postgres is running. If both of those things are working and its still not going, then ¯\_(ツ)_/¯
