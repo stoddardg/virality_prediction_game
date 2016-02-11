@@ -17,6 +17,8 @@ class Quiz(db.Model):
 
     subreddit = db.Column(db.String)
     num_questions = db.Column(db.Integer)
+
+    cluster_id = db.Column(db.String)
     # image_pairs = db.Column(db.Array(db.Integer))    
 
 class Quiz_to_ImagePair(db.Model):
@@ -94,6 +96,8 @@ class User(db.Model):
                                            onupdate=db.func.current_timestamp())
 
     original_referrer = db.Column(db.String)
+    platform = db.Column(db.String)
+    browser = db.Column(db.String)
 
 
 class UserScore(db.Model):
@@ -150,6 +154,7 @@ class Vote(db.Model):
     post_id_1 = db.Column(db.String)
     post_id_2 = db.Column(db.String)
     experiment_condition = db.Column(db.Integer)
+    elapsed_time = db.Column(db.Integer)
 
     def __init__(self, user_id, post_id_1, post_id_2, user_choice, correct_answer, experiment_condition=-1):
         self.user_id = user_id

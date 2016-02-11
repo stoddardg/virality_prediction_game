@@ -53,7 +53,6 @@ def record_survey():
 
 @predict_game.route('/record_all_votes', methods=['POST', 'GET'])
 def record_all_votes():
-    # print 'record all votes called'
     current_uuid = get_uuid_from_cookie(request.cookies)
     
 
@@ -61,6 +60,7 @@ def record_all_votes():
 
     user_choices = json.loads(request.args['votes'])
     user_opinions = json.loads(request.args['opinion_votes'])
+    guess_times = json.loads(request.args['guess_times'])
 
 
     user_correct = json.loads(request.args['user_choice_correct'])
@@ -68,16 +68,9 @@ def record_all_votes():
     image_2_reddit_ids = json.loads(request.args['image_2_reddit_ids'])
 
 
-    # print 'user_choices', user_choices
-    # print 'user_correct',user_correct
-    # print 'image_1_reddit_ids', image_1_reddit_ids
-    # print 'user_opinions', user_opinions
-
-
 
     # TODO: I should really do some better error checking here
     if len(user_choices) != len(user_correct) or len(user_correct) != len(image_1_reddit_ids) or len(image_1_reddit_ids) != len(image_2_reddit_ids):
-        print 'here'
         return 'ok'
 
 
@@ -92,20 +85,20 @@ def record_all_votes():
 
     for i in range(len(user_choices)):
         new_vote = Vote(current_uuid, image_1_reddit_ids[i], image_2_reddit_ids[i], user_choices[i], user_correct[i])
-        
+        new_vote.elapsed_time = int(np.round(guess_times[i]))
 
         db.session.add(new_vote)
         db.session.commit()
 
-        
-        new_opinion_vote = OpinionVote()
-        new_opinion_vote.user_id = current_uuid
-        new_opinion_vote.user_choice = user_opinions[i] 
-        new_opinion_vote.post_id_1 = image_1_reddit_ids[i]
-        new_opinion_vote.post_id_2 = image_2_reddit_ids[i]
-        new_opinion_vote.vote_id = new_vote.id
+        if i < len(user_opinions):
+            new_opinion_vote = OpinionVote()
+            new_opinion_vote.user_id = current_uuid
+            new_opinion_vote.user_choice = user_opinions[i] 
+            new_opinion_vote.post_id_1 = image_1_reddit_ids[i]
+            new_opinion_vote.post_id_2 = image_2_reddit_ids[i]
+            new_opinion_vote.vote_id = new_vote.id
 
-        db.session.add(new_opinion_vote)
+            db.session.add(new_opinion_vote)
 
         if user_correct[i] == 1:
             num_correct += 1
@@ -219,16 +212,20 @@ def get_game_start_data():
 def get_new_quiz(uuid, subreddit):
 
     user_scores = UserScore.query.filter_by(uuid=uuid).all()
-    completed_quizzes = []
+    completed_quiz_ids = []
+    completed_quiz_clusters = []
     for score in user_scores:
-        completed_quizzes.append(score.quiz_id)
+        temp_quiz = Quiz.query.filter_by(id=score.quiz_id).first()
+        completed_quiz_ids.append(temp_quiz.id)
+        if temp_quiz.cluster_id is not None:
+            completed_quiz_clusters.append(temp_quiz.cluster_id)
 
     query_1 = Quiz.query.filter_by(subreddit=subreddit).order_by(db.func.random())
     
     chosen_quiz = query_1.first()
 
     for quiz in query_1.all():
-        if quiz.id not in completed_quizzes:
+        if quiz.id not in completed_quiz_ids and quiz.cluster_id not in completed_quiz_clusters:
             chosen_quiz = quiz
             break
     return chosen_quiz.id, chosen_quiz.num_questions
@@ -268,6 +265,8 @@ def start_game():
         current_user = User()
         current_user.uuid = current_uuid
         current_user.original_referrer = str(request.referrer)
+        current_user.browser = str(request.user_agent.browser)
+        current_user.platform = str(request.user_agent.platform)
         db.session.add(current_user)
         db.session.commit()
 
@@ -278,20 +277,19 @@ def start_game():
 
     experiment_params = get_experimental_params(current_uuid)
 
-    opinion_first = request.args.get('opinion_first')
-    print 'opinion_first', opinion_first
-    if opinion_first is None:
-        opinion_first = True
-    if opinion_first == "False":
-        opinion_first = False
+    ask_opinion = request.args.get('opinion')
+    if ask_opinion is None:
+        ask_opinion = True
+    if ask_opinion == "False":
+        ask_opinion = False
 
 
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
         # ask_opinion = experiment_params['ask_opinion']
-        opinion_first = opinion_first,
-        ask_opinion = True
+        opinion_first = ask_opinion,
+        # ask_opinion = True
         )
     )
 

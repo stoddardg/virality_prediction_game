@@ -251,6 +251,7 @@ var num_correct;
 
 var user_choices = [];
 var user_opinions = [];
+var guess_times = [];
 
 var user_choice_correct = [];
 
@@ -261,6 +262,8 @@ var image_2_reddit_id = [];
 
 var image_1_loaded = 0;
 var image_2_loaded = 0;
+
+var image_load_time = 0;
 
 $(document).ready(function(){
 
@@ -291,6 +294,7 @@ if(window.location.pathname == '/')
                 current_subreddit = data.current_subreddit;
                 update_images();
                 num_correct = 0;
+                image_load_time = Date.now();
             }
         });
 }
@@ -447,6 +451,12 @@ function record_guess(user_choice, callback)
 
     user_choices.push(current_guess)
 
+    elapsed_time = (Date.now() - image_load_time)/1000
+
+    console.log(elapsed_time)
+
+    guess_times.push(elapsed_time)
+
     $("#image_1_score").html(images[current_pair].image_1_score);
     $("#image_2_score").html(images[current_pair].image_2_score);
     $("#image_1_score").css('visibility', 'visible');
@@ -517,9 +527,14 @@ function record_guess(user_choice, callback)
 
 
     // grade_result()
-    setTimeout(function(){
-        grade_result()
-        callback()}, 1500)
+    setTimeout(function()
+    {
+        grade_result();
+        if (callback && typeof(callback) == "function")
+        {
+            callback();
+        }
+    }, 1500)
 }
 
 
@@ -549,7 +564,8 @@ function grade_result()
                     image_1_reddit_ids : JSON.stringify(image_1_reddit_id),
                     image_2_reddit_ids : JSON.stringify(image_2_reddit_id), 
                     current_subreddit : JSON.stringify(current_subreddit),
-                    opinion_votes: JSON.stringify(user_opinions)
+                    opinion_votes: JSON.stringify(user_opinions),
+                    guess_times: JSON.stringify(guess_times),
 
             },
             success : function(){
@@ -605,7 +621,7 @@ function enable_buttons(json_data)
     $("#guess_question_first #prediction_question").css("visibility","visible").hide().fadeIn(0)
     $("#guess_question_first #opinion_question").css("visibility","hidden")
 
-
+    image_load_time = Date.now();
     // $("#num_remaining").html(json_data['num_remaining'])
 }
 
