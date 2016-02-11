@@ -408,10 +408,13 @@ function display_image_data()
 
 
     
-    $("#image_1_score").css('visibility', 'hidden')
+    // $("#image_1_score").css('visibility', 'hidden')
+    $("#image_1_score").html("   ")
     $("#vote_button_1").prop('disabled', false);
 
-    $("#image_2_score").css('visibility', 'hidden')
+    $("#image_2_score").html("   ")
+
+    // $("#image_2_score").css('visibility', 'hidden')
     $("#vote_button_2").prop('disabled', false);
 
     $("#image_1").css("opacity","1")
@@ -459,8 +462,8 @@ function record_guess(user_choice, callback)
 
     $("#image_1_score").html(images[current_pair].image_1_score);
     $("#image_2_score").html(images[current_pair].image_2_score);
-    $("#image_1_score").css('visibility', 'visible');
-    $("#image_2_score").css('visibility', 'visible');
+    // $("#image_1_score").css('visibility', 'visible');
+    // $("#image_2_score").css('visibility', 'visible');
 
 
     user_choice = current_guess
