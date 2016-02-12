@@ -602,9 +602,9 @@ function disable_buttons()
 function enable_buttons(json_data)
 {
     $("#vote_button_1").attr("class","btn btn-info")
-    $("#vote_button_1").html("Left Image")
+    $("#vote_button_1").html("Left Pic")
     $("#vote_button_2").attr("class","btn btn-info")
-    $("#vote_button_2").html("Right Image")
+    $("#vote_button_2").html("Right Pic")
 
     // $("#num_remaining").html(total_questions - current_pair)
     $("#num_remaining").html(current_pair + 1)
