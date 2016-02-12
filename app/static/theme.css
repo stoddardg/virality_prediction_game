@@ -1,7 +1,4 @@
-/*
- * Row with equal height columns
- * --------------------------------------------------
- */
+
 
 .page-header{
 margin: 10px;
@@ -87,8 +84,7 @@ background-color: rgb(22, 105, 173);
   display:block;
   height:80px;
   overflow: hidden;
-  /*margin-top: 10px;*/
-  /*padding-bottom: 10px;*/
+
 
 
 }
@@ -129,7 +125,6 @@ background-color: rgb(22, 105, 173);
 
 .survey-title{
   font-size:175%;
-  /*text-align:center;*/
 }
 
 
@@ -162,7 +157,6 @@ background-color: rgb(22, 105, 173);
 
 .feedback-text{
   font-size: 250%;
-  /*text-align:center;*/
 }
 
 .share-text{
@@ -232,6 +226,11 @@ padding-top: 10px;
     background-color: white;
 }
 
+#enlarge-text{
+  text-align: center;
+  font-size:125%;
+}
+
 
 @media screen and (max-width: 480px) {
     .image_title{
@@ -266,6 +265,9 @@ padding-top: 10px;
     }
     .fb-share-button span{
       top:0px;
+    }
+    .enlarge-text{
+      font-size:100%;
     }
 }
 

@@ -6,7 +6,7 @@
 <p class="subreddit-text">
 These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_source_name}} </a> (<span id="num_remaining">{{num_remaining}}</span>/10)</p>
 
-<div style="text-align: center"> (Click images to enlarge)</div>
+<div id='enlarge-text'> (Click images to enlarge)</div>
 
 {%endblock %}
 
@@ -66,14 +66,14 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 
     <div class="col-xs-6">     
       <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="opinion_button_1" class="btn btn-info">Left Image </button>
+        <button type="button" id="opinion_button_1" class="btn btn-info" style="text-align:center"> Left Image</button>
       </div>
      
     </div>
 
     <div class="col-xs-6">
         <div class="btn-group-vertical btn-block btn-group-lg">
-          <button type="button" id="opinion_button_2" class="btn btn-info">Right Image</button>
+          <button type="button" id="opinion_button_2" class="btn btn-info" style="text-align:center" >Right Image</button>
         </div>
     </div>
 </div>
