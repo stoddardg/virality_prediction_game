@@ -38,10 +38,10 @@ What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these righ
 
 {% block content %}
 
-<div class="container" id="survey">
+<div class="container" id="survey" style={{ show_survey|safe }}>
 <div class="row">
 <div class="col-xs-12 col-lg-12">
-<p class="text-center survey-title"> Answer the survey to see how you compare to other players. </p>
+<p class="text-center survey-title"> Answer the survey to see how your score compares to other players. </p>
 </div>
 </div>
 
@@ -50,13 +50,13 @@ What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these righ
 <p class='text-left survey-text' > 1. Describe your level of Reddit use.</p>
 <div class="btn-group btn-group-justified" id="q1-btn-group">
 <div class="btn-group">
-  <button type="button" class="btn btn-success survey-button">Heavy</button>
+  <button type="button" class="btn btn-success survey-button survey-text">Heavy</button>
 </div>
 <div class="btn-group">
-  <button type="button" class="btn btn-success survey-button">Casual</button>
+  <button type="button" class="btn btn-success survey-button survey-text">Casual</button>
 </div>
 <div class="btn-group">
-  <button type="button" class="btn btn-success survey-button">Don't use it</button>
+  <button type="button" class="btn btn-success survey-button survey-text">Don't use it</button>
 </div>
 </div>
 </div>
@@ -134,7 +134,7 @@ What makes a picture popular on Reddit? I guessed {{correct_pct}}% of these righ
 
 
 <div class="row">
-<div class="col-xs-12" id="peer-scores" hidden>
+<div class="col-xs-12" id="peer-scores" style={{ show_score|safe }}>
 <p class="text-center feedback-text" > The average score for {{subreddit|safe}} is <b>{{median_score}}%</b>.  </p>
 <p class = "text-center feedback-text"> You scored higher than {{user_percentile}}% of players.</p>
 <p class="text-center feedback-text"> <a href='/'> Play again </a> </p>
