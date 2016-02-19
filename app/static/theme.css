@@ -280,5 +280,10 @@ padding-top: 10px;
     .survey-text{
       font-size:100%;
     }
+    #survey.container{
+    padding: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    }
 }
 
