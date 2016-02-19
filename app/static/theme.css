@@ -293,5 +293,15 @@ padding-top: 10px;
         margin-right: 0px;
         margin-left: 0px;
     }
+
+    #survey .col-xs-12{
+     padding: 0 !important;
+     margin: 0 !important;
+      
+    }
 }
 
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
