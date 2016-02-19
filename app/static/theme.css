@@ -222,6 +222,11 @@ padding-top: 10px;
     background-color: aqua;
 }
 
+#guess-question-only{
+  background-color:aqua;
+}
+
+
 #opinion_question {
     background-color: white;
 }
@@ -267,6 +272,12 @@ padding-top: 10px;
       top:0px;
     }
     .enlarge-text{
+      font-size:100%;
+    }
+    .survey-title{
+      font-size:125%;
+    }
+    .survey-text{
       font-size:100%;
     }
 }
