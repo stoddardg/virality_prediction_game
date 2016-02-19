@@ -260,6 +260,8 @@ def start_game():
 
 
     current_uuid = get_uuid_from_cookie(request.cookies)
+    experiment_params = get_experimental_params(current_uuid)
+
     query_1 = User.query.filter_by(uuid=current_uuid).first()
     if query_1 is None:
         current_user = User()
@@ -267,6 +269,8 @@ def start_game():
         current_user.original_referrer = str(request.referrer)
         current_user.browser = str(request.user_agent.browser)
         current_user.platform = str(request.user_agent.platform)
+        current_user.user_agent_string = str(request.headers.get('User-Agent'))
+        current_user.ask_opinion_question = experiment_params['ask_opinion']
         db.session.add(current_user)
         db.session.commit()
 
@@ -287,9 +291,7 @@ def start_game():
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
-        # ask_opinion = experiment_params['ask_opinion']
-        opinion_first = ask_opinion,
-        # ask_opinion = True
+        ask_opinion = experiment_params['ask_opinion']
         )
     )
 
@@ -310,16 +312,31 @@ def end_game():
     current_subreddit = get_current_subreddit(request.cookies)
     [current_subreddit, pic_source_url, pic_source_name] = get_subreddit_info(current_subreddit)
    
-    user_score = float(request.cookies.get('percent_correct'))
+    try:
+        user_score = float(request.cookies.get('percent_correct'))
+    except:
+        user_score = 0.0
 
     mean_score, user_percentile = get_score_distribution_mean(current_subreddit, user_score)
 
 
     sub_html = "<a href=%s> %s </a>" % (pic_source_url, 'r/'+current_subreddit)
 
-    user_score = float(request.cookies.get('percent_correct'))
-    print user_score
-    # form = SurveyForm()
+
+
+    #check to see if a user has filled out a Survey
+    num_user_surveys = SurveyResult.query.filter_by(user_id=current_uuid).count()
+    print 'num_user_surveys',num_user_surveys
+    if num_user_surveys == 0:
+        #ask the survey question
+        show_survey = ""
+        show_score = "display:none"
+    else:
+        # Don't show survey
+        show_survey = "display:none"
+        show_score = ""
+
+
 
 
     response = make_response(render_template('end_game_text_only.html', 
@@ -327,6 +344,8 @@ def end_game():
         median_score=int(mean_score), 
         subreddit=sub_html,
         user_percentile=user_percentile,
+        show_survey=show_survey,
+        show_score=show_score,
         title="Reddit Use"))
 
 

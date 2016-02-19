@@ -206,7 +206,7 @@ function show_peer_scores()
         // $("#survey").attr("hidden", "true")
         $("#survey").fadeOut('slow', function(){
 
-        $("#peer-scores").removeAttr("hidden")
+        $("#peer-scores").show()
         })
         $.ajax({
             url: '/record_survey_result',

@@ -98,7 +98,9 @@ class User(db.Model):
     original_referrer = db.Column(db.String)
     platform = db.Column(db.String)
     browser = db.Column(db.String)
+    user_agent_string = db.Column(db.String)
 
+    ask_opinion_question = db.Column(db.Boolean)
 
 class UserScore(db.Model):
 

@@ -50,7 +50,7 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 </div>
 <hr>
 
-{% if opinion_first %}
+{% if ask_opinion %}
 <div  id="opinion_question_first">
 
 
@@ -120,25 +120,22 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 </div>
 
 
-{% elif ask_opinion %}
+{% else %}
 
-<div id="guess_question_first">
-
-<div id="prediction_question" >
-
+<div id="guess-question-only" >
 <div class="row">
 <div class="col-xs-12">
-  <p class="more-popular-text"> Guess which image received more upvotes on Reddit.</p>
+  <p class="more-popular-text"> Which earned more upvotes on Reddit?</p>
 </div>
 </div>
 
-<div class="row">      
+<div class="row text-center">      
 
     <div class="col-md-6 col-xs-6">     
             
 
       <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="vote_button_1" class="btn btn-info"> Left Pic </button>
+        <button type="button" id="vote_button_1" class="btn btn-info">Left Pic</button>
       </div>
 
     </div>
@@ -152,50 +149,17 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 
     </div>
 </div>
-<div class="score_text">
+<div class="row score_text">
   <div class="col-xs-6 "> 
          <span id="image_1_caption" >  Upvotes: <span id="image_1_score" ></span> </span>
   </div>
   <div class="col-xs-6">
-        <span id="image_2_caption" > Upvotes: <span id="image_2_score" ></span> </span>
+        <span id="image_2_caption" > Upvotes: <span id="image_2_score"></span></span>
   </div>
   </div>
 </div>
 
-<div  id="opinion_question" style="display:none">
-<div class="row">
-<div class="col-xs-12">
-  <p class="opinion-text"> In your opinion, which image is better?</p>
-</div>
-</div>
-
-
-<div class="row">      
-
-    <div class="col-xs-6">     
-      <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="opinion_button_1" class="btn btn-info"> Left Pic</button>
-      </div>
-     
-    </div>
-
-    <div class="col-xs-6">
-        <div class="btn-group-vertical btn-block btn-group-lg">
-          <button type="button" id="opinion_button_2" class="btn btn-info"> Right Pic</button>
-        </div>
-    </div>
-</div>
-</div>
-
-
-
-
-
-</div>
-
-{% else %}
-
-<div  id="guess-question-only">
+<!-- <div  id="guess-question-only">
 <div class="row">
 <div class="col-xs-12">
   <p class="more-popular-text"> Which earned more upvotes on Reddit?</p>
@@ -233,7 +197,7 @@ These images were posted to <a href={{pic_source_url}} target="_blank"> {{pic_so
 </div>
 </div>
 
-</div>
+</div> -->
 
 
 {% endif %}
