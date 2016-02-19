@@ -260,7 +260,7 @@ padding-top: 10px;
       font-size:100%;
     }
     .feedback-text{
-      font-size:150%;
+      font-size:125%;
     }
     .share-text{
       font-size:110%;
@@ -297,7 +297,7 @@ padding-top: 10px;
     #survey .col-xs-12{
      padding: 0 !important;
      margin: 0 !important;
-      
+
     }
 }
 
