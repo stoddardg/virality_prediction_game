@@ -255,7 +255,17 @@ def get_experimental_params(current_uuid):
 def start_game():
 
 
-    sub_param = request.args.get('article_source')
+
+    if request.args.get('quiz_id') is None:
+        sub_param = request.args.get('article_source')
+
+        quiz_id, num_questions = get_new_quiz(current_uuid, subreddit)
+
+    else:
+        quiz_id = request.args.get('quiz_id')
+        sub_param = get_quiz_subreddit(quiz_id)
+        num_questions = 10
+
     [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
 
@@ -275,8 +285,6 @@ def start_game():
         db.session.commit()
 
 
-
-    quiz_id, num_questions = get_new_quiz(current_uuid, subreddit)
 
 
     experiment_params = get_experimental_params(current_uuid)
@@ -411,6 +419,10 @@ def get_uuid_from_cookie(cookie):
         user_id = cookie.get(UUID_NAME)
     return user_id
 
+
+def get_quiz_subreddit(quiz_id):
+    current_quiz = Quiz.query.filter_by(id=quiz_id).first()
+    return current_quiz.subreddit
 
 def load_quiz(current_uuid, subreddit, quiz_id=None):
     
