@@ -259,15 +259,18 @@ def start_game():
 
     if request.args.get('quiz_id') is None:
         sub_param = request.args.get('article_source')
+        [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
         quiz_id, num_questions = get_new_quiz(current_uuid, subreddit)
 
     else:
         quiz_id = request.args.get('quiz_id')
         sub_param = get_quiz_subreddit(quiz_id)
+        [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
+
         num_questions = 10
 
-    [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
+    # [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
 
     experiment_params = get_experimental_params(current_uuid)
