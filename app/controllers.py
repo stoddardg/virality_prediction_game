@@ -172,9 +172,9 @@ def get_game_start_data():
         temp_data = {}
         temp_data['image_1_url'] = convert_imgur_url(pair[0].url, size=None)
         
-        temp_data['image_1_title'] = pair[0].title
+        # temp_data['image_1_title'] = pair[0].title
         """ Change this to reddit_id for debugging only"""
-        # temp_data['image_1_title'] = pair[0].reddit_id
+        temp_data['image_1_title'] = pair[0].title + ' ' + pair[0].reddit_id
 
 
         temp_data['image_1_score'] = pair[0].score
@@ -182,9 +182,9 @@ def get_game_start_data():
         temp_data['image_1_reddit_id'] = pair[0].reddit_id
 
         temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size=None)
-        temp_data['image_2_title'] = pair[1].title
+        # temp_data['image_2_title'] = pair[1].title
         """ Change this to reddit_id for debugging only"""
-        # temp_data['image_2_title'] = pair[1].reddit_id
+        temp_data['image_2_title'] = pair[1].title + ' ' + pair[1].reddit_id
 
         temp_data['image_2_score'] = pair[1].score
         temp_data['image_2_lightbox_src'] = pair[1].url
@@ -477,6 +477,12 @@ def get_subreddit_info(subreddit=None):
     elif subreddit == 'photocritique':
         pic_source_url = 'https://www.reddit.com/r/photocritique'
         pic_source_name = 'reddit.com/r/photocritique'
+    elif subreddit == 'CrappyDesign':
+        pic_source_url = 'https://www.reddit.com/r/crappydesign'
+        pic_source_name = 'reddit.com/r/crappydesign'
+    elif subreddit == 'EarthPorn':
+        pic_source_url = 'https://www.reddit.com/r/earthporn'
+        pic_source_name = 'reddit.com/r/earthporn'
     else:
         random_sub = choice(subreddits)
         return get_subreddit_info(subreddit=random_sub)

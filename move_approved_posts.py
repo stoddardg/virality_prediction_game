@@ -8,19 +8,30 @@ from sqlalchemy.exc import IntegrityError
 import pandas
 from sqlalchemy import create_engine
 
+import glob
 
 
+def import_all_quiz_data():
+    filenames = glob.glob("experiment_scripts/*.csv.gz")
+    for f in filenames:
+        import_quiz(f)
 
 def import_quiz(filename):
     quiz_df = pandas.read_csv(filename)
-    for quiz_id, data in quiz_df.groupby('quiz_id'):
-        print quiz_id
+
+    for quiz_cluster, data in quiz_df.groupby(['quiz_cluster','quiz_id']):
+        cluster_id = quiz_cluster[0]
+        quiz_id = quiz_cluster[1]
+
 
         subreddit = data.subreddit.min()
         num_questions = len(data) / 2
         #Create a new quiz
 
         new_quiz = Quiz(subreddit=subreddit, num_questions=10)
+        new_quiz.cluster_id = cluster_id
+
+
         db.session.add(new_quiz)
         db.session.commit()
 
@@ -49,7 +60,6 @@ def import_quiz(filename):
             quiz_to_image_pair = Quiz_to_ImagePair(quiz_id = new_quiz.id, image_pair_id = image_pair.id)
             db.session.add(quiz_to_image_pair)
             db.session.commit()
-
 
 def export_images(file_name):
     engine = create_engine('postgresql://localhost/prediction_game')
@@ -87,5 +97,8 @@ if __name__ == '__main__':
 
     if sys.argv[1] == 'import_script':
         import_quiz(sys.argv[2])
+
+    if sys.argv[1] == 'import_all_scripts':
+        import_all_quiz_data()
 
 

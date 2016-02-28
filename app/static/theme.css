@@ -219,11 +219,11 @@ padding-top: 10px;
 }
 
 #prediction_question {
-    background-color: aqua;
+    background-color: rgba(255,0,0,0.2);
 }
 
 #guess-question-only{
-  background-color:aqua;
+  background-color:rgba(255,0,0,0.2);
 }
 
 
