@@ -255,6 +255,7 @@ def get_experimental_params(current_uuid):
 def start_game():
 
 
+    current_uuid = get_uuid_from_cookie(request.cookies)
 
     if request.args.get('quiz_id') is None:
         sub_param = request.args.get('article_source')
@@ -269,7 +270,6 @@ def start_game():
     [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
 
-    current_uuid = get_uuid_from_cookie(request.cookies)
     experiment_params = get_experimental_params(current_uuid)
 
     query_1 = User.query.filter_by(uuid=current_uuid).first()
