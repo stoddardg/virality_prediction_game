@@ -443,6 +443,8 @@ var current_guess = 0
 function record_opinion(user_opinion)
 {
     console.log("record_opinion called")
+    $("#opinion_button_1").prop('disabled', true);
+    $("#opinion_button_2").prop('disabled', true);
     current_opinion = user_opinion
     user_opinions.push(current_opinion)
     opinion_ready = 1
@@ -452,10 +454,13 @@ function record_opinion(user_opinion)
 
 function record_guess(user_choice, callback)
 {
+    $("#vote_button_1").prop('disabled', true);
+    $("#vote_button_2").prop('disabled', true);
     guess_ready = 1
     current_guess = user_choice
 
     user_choices.push(current_guess)
+
 
     elapsed_time = (Date.now() - image_load_time)/1000
 
@@ -611,6 +616,11 @@ function disable_buttons()
 
 function enable_buttons(json_data)
 {
+
+    $("#opinion_button_1").prop('disabled', false);
+    $("#opinion_button_2").prop('disabled', false);
+
+
     $("#vote_button_1").attr("class","btn btn-info")
     $("#vote_button_1").html("Left Pic")
     $("#vote_button_2").attr("class","btn btn-info")
@@ -625,6 +635,10 @@ function enable_buttons(json_data)
 
     opinion_ready = 0
     guess_ready = 0
+
+
+
+
 
 
     $("#opinion_question_first #opinion_question").css("visibility","visible").hide().fadeIn(0)
