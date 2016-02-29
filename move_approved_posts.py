@@ -1,9 +1,9 @@
 import sys
 
-
+import numpy as np
 
 from app import db
-from app.models import Post,ImagePair, Quiz, Quiz_to_ImagePair
+from app.models import Post,ImagePair, Quiz, Quiz_to_ImagePair, UserScore
 from sqlalchemy.exc import IntegrityError
 import pandas
 from sqlalchemy import create_engine
@@ -11,10 +11,37 @@ from sqlalchemy import create_engine
 import glob
 
 
+
 def import_all_quiz_data():
     filenames = glob.glob("experiment_scripts/*.csv.gz")
     for f in filenames:
         import_quiz(f)
+
+
+def populate_user_scores():
+
+    subreddits = ['aww','pics',
+    'OldSchoolCool','itookapicture',
+    'photocritique','funny','CrappyDesign',
+    'EarthPorn']
+
+    num_fake_scores = 10
+
+    for s in subreddits:
+        for i in np.arange(num_fake_scores):
+            guesses = np.random.random_integers(0,1,size=[10])
+            num_correct = len(guesses[guesses==1])
+            num_wrong = len(guesses[guesses==0])
+            new_score = UserScore(uuid=-1,
+                subreddit=s,
+                num_correct = num_correct,
+                num_wrong= num_wrong,
+                num_questions=len(guesses),
+                num_seen=len(guesses),
+                quiz_id=-1
+                )
+            db.session.add(new_score)
+            db.session.commit()
 
 def import_quiz(filename):
     quiz_df = pandas.read_csv(filename)

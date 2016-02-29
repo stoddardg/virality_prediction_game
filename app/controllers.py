@@ -347,11 +347,14 @@ def end_game():
         show_survey = "display:none"
         show_score = ""
 
-
+    if request.cookies.get('percent_correct') is None:
+        correct_pct = 0
+    else:
+        correct_pct = request.cookies.get('percent_correct')
 
 
     response = make_response(render_template('end_game_text_only.html', 
-        correct_pct=request.cookies.get('percent_correct'), 
+        correct_pct=int(user_score),
         median_score=int(mean_score), 
         subreddit=sub_html,
         user_percentile=user_percentile,

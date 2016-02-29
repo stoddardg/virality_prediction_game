@@ -374,6 +374,7 @@ function resize_images_and_title()
     console.log("max title height " + max_title_height)
     while( image_1_title_height >= max_title_height)
     {
+        console.log("in loop")
         var font_size = parseFloat($("#image_1_title").css("font-size"))
         image_1_title.css("font-size", (font_size -1) + "px")
         image_1_title_height = image_1_title.height()
@@ -381,6 +382,8 @@ function resize_images_and_title()
 
     while( image_2_title_height >= max_title_height)
     {
+        console.log("in loop")
+
         var font_size = parseFloat($("#image_2_title").css("font-size"))
         image_2_title.css("font-size", (font_size -1) + "px")
         image_2_title_height = image_2_title.height()
@@ -469,24 +472,31 @@ function record_guess(user_choice, callback)
     user_choice = current_guess
 
     var correct_answer;
-    if(images[current_pair].image_1_score >= images[current_pair].image_2_score)
-    {
-        correct_answer = 1;
-    }
-    else{
-        correct_answer = 2;
-    }
-
-    if(user_choice == correct_answer)
+    if(images[current_pair].image_1_score == images[current_pair].image_2_score)
     {
         user_correct = 1;
-        num_correct  = num_correct + 1;
+        num_correct = num_correct + 1;
     }
     else
     {
-        user_correct = 0;
-    }
+        if(images[current_pair].image_1_score >= images[current_pair].image_2_score)
+        {
+            correct_answer = 1;
+        }
+        else{
+            correct_answer = 2;
+        }
 
+        if(user_choice == correct_answer)
+        {
+            user_correct = 1;
+            num_correct  = num_correct + 1;
+        }
+        else
+        {
+            user_correct = 0;
+        }
+    }
     user_choice_correct.push(user_correct)
     image_1_reddit_id.push(images[current_pair].image_1_reddit_id)
     image_2_reddit_id.push(images[current_pair].image_2_reddit_id)
