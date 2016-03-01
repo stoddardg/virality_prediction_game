@@ -490,7 +490,7 @@ def survey():
 
 
 def get_subreddit_info(subreddit=None):
-    subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture']
+    subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn','CrappyDesign','photocritique']
 
     if subreddit == 'aww':
         pic_source_url = "http://www.reddit.com/r/aww"
