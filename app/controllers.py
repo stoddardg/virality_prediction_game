@@ -291,6 +291,7 @@ def start_game():
     else:
         if request.args.get('role') is not None:
             query_1.role = str(request.args.get('role'))
+            query_1.full_url = str(request.url)
             db.session.commit()
         elif request.args.get('special_url') is not None:
             query_1.full_url = str(request.url)
