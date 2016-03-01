@@ -101,6 +101,8 @@ class User(db.Model):
     user_agent_string = db.Column(db.String)
 
     ask_opinion_question = db.Column(db.Boolean)
+    role = db.Column(db.String)
+    full_url = db.Column(db.String)
 
 class UserScore(db.Model):
 

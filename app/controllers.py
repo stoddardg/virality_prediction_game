@@ -283,9 +283,21 @@ def start_game():
         current_user.browser = str(request.user_agent.browser)
         current_user.platform = str(request.user_agent.platform)
         current_user.user_agent_string = str(request.headers.get('User-Agent'))
+        current_user.role = str(request.args.get('role'))
         current_user.ask_opinion_question = experiment_params['ask_opinion']
+        current_user.full_url = str(request.url)
         db.session.add(current_user)
         db.session.commit()
+    else:
+        if request.args.get('role') is not None:
+            query_1.role = str(request.args.get('role'))
+            db.session.commit()
+        elif request.args.get('special_url') is not None:
+            query_1.full_url = str(request.url)
+            db.session.commit()
+        # query_1.role = str(request.args.get('role'))
+        # query_1.full_url = str(request.url)
+        # db.session.commit()
 
 
 
