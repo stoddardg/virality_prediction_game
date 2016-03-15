@@ -86,7 +86,7 @@ def record_all_votes():
     for i in range(len(user_choices)):
         new_vote = Vote(current_uuid, image_1_reddit_ids[i], image_2_reddit_ids[i], user_choices[i], user_correct[i])
         new_vote.elapsed_time = int(np.round(guess_times[i]))
-        new_vote.experiment_id = 2
+        new_vote.experiment_condition = 2
 
         db.session.add(new_vote)
         db.session.commit()
