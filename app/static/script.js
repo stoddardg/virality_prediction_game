@@ -372,15 +372,17 @@ function resize_images_and_title()
 
 
     console.log("max title height " + max_title_height)
-    while( image_1_title_height >= max_title_height)
+    console.log("image_1_title_height " + image_1_title_height)
+    while( image_1_title_height >= max_title_height && image_1_title_height > 0)
     {
         console.log("in loop")
+        console.log(image_1_title_height)
         var font_size = parseFloat($("#image_1_title").css("font-size"))
         image_1_title.css("font-size", (font_size -1) + "px")
         image_1_title_height = image_1_title.height()
     }
 
-    while( image_2_title_height >= max_title_height)
+    while( image_2_title_height >= max_title_height && image_2_title_height > 0)
     {
         console.log("in loop")
 

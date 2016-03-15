@@ -86,6 +86,7 @@ def record_all_votes():
     for i in range(len(user_choices)):
         new_vote = Vote(current_uuid, image_1_reddit_ids[i], image_2_reddit_ids[i], user_choices[i], user_correct[i])
         new_vote.elapsed_time = int(np.round(guess_times[i]))
+        new_vote.experiment_id = 2
 
         db.session.add(new_vote)
         db.session.commit()
@@ -172,7 +173,10 @@ def get_game_start_data():
         temp_data = {}
         temp_data['image_1_url'] = convert_imgur_url(pair[0].url, size=None)
         
-        temp_data['image_1_title'] = pair[0].title
+
+        temp_data['image_1_title'] = " "
+
+        # temp_data['image_1_title'] = pair[0].title
         """ Change this to reddit_id for debugging only"""
         # temp_data['image_1_title'] = pair[0].title + ' ' + pair[0].reddit_id
 
@@ -182,7 +186,9 @@ def get_game_start_data():
         temp_data['image_1_reddit_id'] = pair[0].reddit_id
 
         temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size=None)
-        temp_data['image_2_title'] = pair[1].title
+        temp_data['image_2_title'] = " "
+
+        # temp_data['image_2_title'] = pair[1].title
         """ Change this to reddit_id for debugging only"""
         # temp_data['image_2_title'] = pair[1].title + ' ' + pair[1].reddit_id
 
