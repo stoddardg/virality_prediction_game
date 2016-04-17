@@ -177,9 +177,9 @@ def get_game_start_data():
 
         # temp_data['image_1_title'] = " "
 
-        # temp_data['image_1_title'] = pair[0].title
+        temp_data['image_1_title'] = pair[0].title
         """ Change this to reddit_id for debugging only"""
-        temp_data['image_1_title'] = pair[0].title + ' ' + pair[0].reddit_id
+        # temp_data['image_1_title'] = pair[0].title + ' ' + pair[0].reddit_id
 
 
         temp_data['image_1_score'] = pair[0].score
@@ -189,9 +189,9 @@ def get_game_start_data():
         temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size=None)
         # temp_data['image_2_title'] = " "
 
-        # temp_data['image_2_title'] = pair[1].title
+        temp_data['image_2_title'] = pair[1].title
         """ Change this to reddit_id for debugging only"""
-        temp_data['image_2_title'] = pair[1].title + ' ' + pair[1].reddit_id
+        # temp_data['image_2_title'] = pair[1].title + ' ' + pair[1].reddit_id
 
         temp_data['image_2_score'] = pair[1].score
         temp_data['image_2_lightbox_src'] = pair[1].url
