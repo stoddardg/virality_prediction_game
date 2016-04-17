@@ -557,7 +557,7 @@ function record_guess(user_choice, callback)
     }, image_refresh_delay)
 }
 
-var image_refresh_delay = 100;
+var image_refresh_delay = 1500;
 
 function grade_result()
 {
