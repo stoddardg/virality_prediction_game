@@ -1,6 +1,4 @@
 import pandas
-import imgurpython
-from imgurpython.helpers.error import ImgurClientError
 
 
 import config
