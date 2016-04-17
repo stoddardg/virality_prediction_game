@@ -24,6 +24,7 @@ predict_game = Blueprint("app",__name__)
 
 UUID_NAME = 'guessit_uuid'
 
+num_quiz_questions = 15
 
 @predict_game.route('/record_survey_result')
 def record_survey():
@@ -174,11 +175,11 @@ def get_game_start_data():
         temp_data['image_1_url'] = convert_imgur_url(pair[0].url, size=None)
         
 
-        temp_data['image_1_title'] = " "
+        # temp_data['image_1_title'] = " "
 
         # temp_data['image_1_title'] = pair[0].title
         """ Change this to reddit_id for debugging only"""
-        # temp_data['image_1_title'] = pair[0].title + ' ' + pair[0].reddit_id
+        temp_data['image_1_title'] = pair[0].title + ' ' + pair[0].reddit_id
 
 
         temp_data['image_1_score'] = pair[0].score
@@ -186,11 +187,11 @@ def get_game_start_data():
         temp_data['image_1_reddit_id'] = pair[0].reddit_id
 
         temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size=None)
-        temp_data['image_2_title'] = " "
+        # temp_data['image_2_title'] = " "
 
         # temp_data['image_2_title'] = pair[1].title
         """ Change this to reddit_id for debugging only"""
-        # temp_data['image_2_title'] = pair[1].title + ' ' + pair[1].reddit_id
+        temp_data['image_2_title'] = pair[1].title + ' ' + pair[1].reddit_id
 
         temp_data['image_2_score'] = pair[1].score
         temp_data['image_2_lightbox_src'] = pair[1].url
@@ -321,7 +322,8 @@ def start_game():
     response = make_response( render_template('pic_game_mobile.html', 
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
-        ask_opinion = experiment_params['ask_opinion']
+        ask_opinion = experiment_params['ask_opinion'],
+        num_questions = num_quiz_questions,
         )
     )
 
@@ -461,7 +463,7 @@ def load_quiz(current_uuid, subreddit, quiz_id=None):
     print "quiz_id", current_quiz.id
 
 
-    questions = Quiz_to_ImagePair.query.filter_by(quiz_id=current_quiz.id).order_by(db.func.random()).all()
+    questions = Quiz_to_ImagePair.query.filter_by(quiz_id=current_quiz.id).order_by(db.func.random()).limit(num_quiz_questions).all()
     image_pairs = []
     for q in questions:
         if np.random.randint(2) == 0:
@@ -496,7 +498,8 @@ def survey():
 
 
 def get_subreddit_info(subreddit=None):
-    subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn','CrappyDesign','photocritique']
+    # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn','CrappyDesign','photocritique']
+    subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn']
 
     if subreddit == 'aww':
         pic_source_url = "http://www.reddit.com/r/aww"
@@ -513,12 +516,12 @@ def get_subreddit_info(subreddit=None):
     elif subreddit == 'itookapicture':
         pic_source_url = 'https://www.reddit.com/r/itookapicture'
         pic_source_name = 'reddit.com/r/itookapicture'
-    elif subreddit == 'photocritique':
-        pic_source_url = 'https://www.reddit.com/r/photocritique'
-        pic_source_name = 'reddit.com/r/photocritique'
-    elif subreddit == 'CrappyDesign':
-        pic_source_url = 'https://www.reddit.com/r/crappydesign'
-        pic_source_name = 'reddit.com/r/crappydesign'
+    # elif subreddit == 'photocritique':
+    #     pic_source_url = 'https://www.reddit.com/r/photocritique'
+    #     pic_source_name = 'reddit.com/r/photocritique'
+    # elif subreddit == 'CrappyDesign':
+    #     pic_source_url = 'https://www.reddit.com/r/crappydesign'
+    #     pic_source_name = 'reddit.com/r/crappydesign'
     elif subreddit == 'EarthPorn':
         pic_source_url = 'https://www.reddit.com/r/earthporn'
         pic_source_name = 'reddit.com/r/earthporn'

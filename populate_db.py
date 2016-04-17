@@ -8,6 +8,7 @@ from app import db
 from app.models import Post,ImagePair, Quiz, Quiz_to_ImagePair
 from sqlalchemy.exc import IntegrityError
 
+import glob
 
 def import_quiz(filename):
     quiz_df = pandas.read_csv(filename)
@@ -23,6 +24,8 @@ def import_quiz(filename):
         db.session.commit()
 
         for pair_id, images in data.groupby('question_id'):
+            if len(images) < 2:
+                continue
             image_dict = images.to_dict(orient='records')
             posts = []
             for image in image_dict:
@@ -34,11 +37,27 @@ def import_quiz(filename):
                 if len(query_1.all()) > 0 :
                     p = query_1.first()
                 else:
+                    if 'year' in image:
+                        image_year = image['year']
+                    else:
+                        image_year = -1
+                    if 'month' in image:
+                        image_month = image['month']
+                    else:
+                        image_month = -1
                     p = Post(image['url'], image['title'], image['score'], image['id'], subreddit, 
-                             image['year'],image['month'])
+                             image_year,image_month)
                     db.session.add(p)
                     db.session.commit()
                 posts.append(p)
+            if posts[0].id == posts[1].id:
+                continue
+            if posts[0].url =='http://i.imgur.com/gooPC.png' or posts[1].url=='http://i.imgur.com/gooPC.png':
+                continue
+
+            if posts[0].score == posts[1].score:
+                continue
+
             image_pair = ImagePair(image_1_id = posts[0].id, image_2_id = posts[1].id)
             db.session.add(image_pair)
             db.session.commit()
@@ -51,7 +70,10 @@ def import_quiz(filename):
 
 
 if __name__=='__main__':
-    import_quiz('raw_script_data/script_data.csv.gz')
+    # import_quiz('raw_script_data/script_data_new.csv')
+    for filename in glob.glob('raw_script_data/*.csv'):
+        import_quiz(filename)
+        # print filename
 
 
 

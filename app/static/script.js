@@ -554,9 +554,10 @@ function record_guess(user_choice, callback)
         {
             callback();
         }
-    }, 1500)
+    }, image_refresh_delay)
 }
 
+var image_refresh_delay = 100;
 
 function grade_result()
 {
@@ -589,7 +590,7 @@ function grade_result()
 
             },
             success : function(){
-                setTimeout(function(){window.location.href = '/end_game'}, 1500) }
+                setTimeout(function(){window.location.href = '/end_game'}, image_refresh_delay) }
 
 
             });
