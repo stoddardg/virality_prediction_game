@@ -249,7 +249,7 @@ def get_experimental_params(current_uuid):
 
     experiment_params = {}
 
-    if x < 25:
+    if x < 0:
         experiment_params['ask_opinion'] = False
     else:
         experiment_params['ask_opinion'] = True
