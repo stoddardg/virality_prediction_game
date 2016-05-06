@@ -159,6 +159,11 @@ background-color: rgb(22, 105, 173);
   font-size: 250%;
 }
 
+.mturk-text{
+  font-size: 150%;
+}
+
+
 .share-text{
   font-size: 200%;
   text-align:center;

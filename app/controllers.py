@@ -24,7 +24,7 @@ predict_game = Blueprint("app",__name__)
 
 UUID_NAME = 'guessit_uuid'
 
-num_quiz_questions = 15
+num_quiz_questions = 100
 
 @predict_game.route('/record_survey_result')
 def record_survey():
@@ -212,6 +212,14 @@ def get_game_start_data():
     response_data['current_subreddit'] = subreddit
 
 
+    # if request.cookies.get("turk_worker","False") == "True":
+    #     response_data['turk_worker'] = 1
+    # else:
+    #     response_data['turk_worker'] = 0
+
+    response_data['user_id'] = current_uuid
+
+
     return jsonify(response_data)
    
 
@@ -223,13 +231,17 @@ def get_new_quiz(uuid, subreddit):
     completed_quiz_clusters = []
     for score in user_scores:
         temp_quiz = Quiz.query.filter_by(id=score.quiz_id).first()
-        completed_quiz_ids.append(temp_quiz.id)
+        if temp_quiz is None:
+            continue
+        completed_quiz_ids.append(score.quiz_id)
         if temp_quiz.cluster_id is not None:
             completed_quiz_clusters.append(temp_quiz.cluster_id)
 
     query_1 = Quiz.query.filter_by(subreddit=subreddit).order_by(db.func.random())
     
+    print subreddit
     chosen_quiz = query_1.first()
+    print chosen_quiz.id
 
     for quiz in query_1.all():
         if quiz.id not in completed_quiz_ids and quiz.cluster_id not in completed_quiz_clusters:
@@ -274,11 +286,7 @@ def start_game():
         quiz_id = request.args.get('quiz_id')
         sub_param = get_quiz_subreddit(quiz_id)
         [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
-
-        num_questions = 10
-
-    # [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
-
+        num_questions = get_quiz_num_questions(quiz_id)
 
     experiment_params = get_experimental_params(current_uuid)
 
@@ -303,9 +311,7 @@ def start_game():
         elif request.args.get('special_url') is not None:
             query_1.full_url = str(request.url)
             db.session.commit()
-        # query_1.role = str(request.args.get('role'))
-        # query_1.full_url = str(request.url)
-        # db.session.commit()
+
 
 
 
@@ -323,7 +329,7 @@ def start_game():
         pic_source_url = pic_source_url,
         pic_source_name = pic_source_name,
         ask_opinion = experiment_params['ask_opinion'],
-        num_questions = num_quiz_questions,
+        num_questions = num_questions,
         )
     )
 
@@ -333,6 +339,12 @@ def start_game():
     response.set_cookie('subreddit',subreddit)
     response.set_cookie('quiz_id', str(quiz_id))
     response.set_cookie('percent_correct', '', expires=0)
+
+    if request.args.get("turk","False") == "True":
+        response.set_cookie('turk_worker',str(True))
+    else:
+        response.set_cookie('turk_worker',str(False))
+
 
 
 
@@ -370,6 +382,13 @@ def end_game():
         show_survey = "display:none"
         show_score = ""
 
+
+    if request.cookies.get("turk_worker", "False") == "True":
+        show_uuid=""
+    else:
+        show_uuid="display:none"
+
+
     if request.cookies.get('percent_correct') is None:
         correct_pct = 0
     else:
@@ -383,8 +402,14 @@ def end_game():
         user_percentile=user_percentile,
         show_survey=show_survey,
         show_score=show_score,
+        turk_user_id=current_uuid,
+        show_uuid=show_uuid,
         title="Reddit Use"))
 
+    # if request.cookies.get("turk_worker","False") == "True":
+    #     response_data['turk_worker'] = 1
+    # else:
+    #     response_data['turk_worker'] = 0
 
     return response
 
@@ -453,6 +478,11 @@ def get_quiz_subreddit(quiz_id):
     current_quiz = Quiz.query.filter_by(id=quiz_id).first()
     return current_quiz.subreddit
 
+def get_quiz_num_questions(quiz_id):
+    current_quiz = Quiz.query.filter_by(id=quiz_id).first()
+    return current_quiz.num_questions
+
+
 def load_quiz(current_uuid, subreddit, quiz_id=None):
     
     if quiz_id is not None:
@@ -499,7 +529,10 @@ def survey():
 
 def get_subreddit_info(subreddit=None):
     # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn','CrappyDesign','photocritique']
-    subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn']
+    # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn']
+
+    subreddits = ['EarthPorn','Art','mildlyinteresting']
+
 
     if subreddit == 'aww':
         pic_source_url = "http://www.reddit.com/r/aww"
@@ -525,6 +558,12 @@ def get_subreddit_info(subreddit=None):
     elif subreddit == 'EarthPorn':
         pic_source_url = 'https://www.reddit.com/r/earthporn'
         pic_source_name = 'reddit.com/r/earthporn'
+    elif subreddit == 'Art':
+        pic_source_url = 'https://www.reddit.com/r/art'
+        pic_source_name = 'reddit.com/r/art'
+    elif subreddit == 'mildlyinteresting':
+        pic_source_url = 'https://www.reddit.com/r/mildlyinteresting'
+        pic_source_name = 'reddit.com/r/mildlyinteresting'
     else:
         random_sub = choice(subreddits)
         return get_subreddit_info(subreddit=random_sub)
@@ -532,12 +571,13 @@ def get_subreddit_info(subreddit=None):
     return [subreddit, pic_source_url, pic_source_name]
 
 
-# @predict_game.route('/')
-# def index():
-#     response = redirect(url_for('.start_game'))
-#     current_uuid = get_uuid_from_cookie(request.cookies)
-#     response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
-#     return response
+@predict_game.route('/turk')
+def index():
+    response = redirect(url_for('.start_game'))
+    current_uuid = get_uuid_from_cookie(request.cookies)
+    # response.set_cookie(UUID_NAME, current_uuid, max_age = MAX_COOKIE_AGE)
+    response.set_cookie('turk_worker',str(True))
+    return response
     # return "hi"
 
 @predict_game.route('/about')

@@ -85,12 +85,13 @@ $(function() {
 });
 
 
+
 $(function() {
     $('#opinion_question_first #opinion_button_1').click(function() {
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_opinion(1)
         $("#opinion_question_first #opinion_question").fadeOut("slow", function(){
-        $("#opinion_question_first #prediction_question").css("visibility","visible").hide().fadeIn("slow")
+        $("#opinion_question_first #prediction_question").css("visibility","visible").hide().fadeIn()
     })
 
     });
@@ -102,7 +103,7 @@ $(function() {
         $(this).addClass('btn-warning').removeClass('btn-success ');
         record_opinion(2)
         $("#opinion_question_first #opinion_question").fadeOut("slow", function(){
-        $("#opinion_question_first #prediction_question").css("visibility","visible").hide().fadeIn("slow")
+        $("#opinion_question_first #prediction_question").css("visibility","visible").hide().fadeIn()
     })
 
 
@@ -207,6 +208,10 @@ function show_peer_scores()
         $("#survey").fadeOut('slow', function(){
 
         $("#peer-scores").show()
+        if(turk_worker == 1)
+        {
+            $("#turk-code").show()
+        }
         })
         $.ajax({
             url: '/record_survey_result',
@@ -265,6 +270,10 @@ var image_2_loaded = 0;
 
 var image_load_time = 0;
 
+var turk_worker = 0;
+
+var user_id = 0;
+
 $(document).ready(function(){
 
    $("#image_1").on('load', function(){
@@ -295,6 +304,7 @@ if(window.location.pathname == '/')
                 update_images();
                 num_correct = 0;
                 image_load_time = Date.now();
+                user_id = data.user_id;
             }
         });
 }
@@ -557,7 +567,7 @@ function record_guess(user_choice, callback)
     }, image_refresh_delay)
 }
 
-var image_refresh_delay = 1500;
+var image_refresh_delay = 1000;
 
 function grade_result()
 {

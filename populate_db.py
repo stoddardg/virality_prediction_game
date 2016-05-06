@@ -14,10 +14,13 @@ def import_quiz(filename):
         print quiz_id
 
         subreddit = data.subreddit.min()
-        num_questions = len(data) / 2
+        num_questions = len(data) // 2
         #Create a new quiz
 
-        new_quiz = Quiz(subreddit=subreddit, num_questions=10)
+
+        num_questions_added = 0
+
+        new_quiz = Quiz(subreddit=subreddit, num_questions=num_questions)
         db.session.add(new_quiz)
         db.session.commit()
 
@@ -56,15 +59,27 @@ def import_quiz(filename):
             if posts[0].score == posts[1].score:
                 continue
 
+            if posts[0].url.find('#') != -1 or posts[1].url.find('#') != -1:
+                continue
+
+            if posts[0].url.find('?') != -1 or posts[1].url.find('?') != -1:
+                continue
+
+
+
             image_pair = ImagePair(image_1_id = posts[0].id, image_2_id = posts[1].id)
             db.session.add(image_pair)
             db.session.commit()
+            num_questions_added += 1
 
 
             quiz_to_image_pair = Quiz_to_ImagePair(quiz_id = new_quiz.id, image_pair_id = image_pair.id)
             db.session.add(quiz_to_image_pair)
             db.session.commit()
         
+        if num_questions_added < num_questions:
+            new_quiz.num_questions = num_questions_added
+            db.session.commit()
 
 
 if __name__=='__main__':
