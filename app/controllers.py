@@ -239,15 +239,17 @@ def get_new_quiz(uuid, subreddit):
 
     query_1 = Quiz.query.filter_by(subreddit=subreddit).order_by(db.func.random())
     
-    print subreddit
-    chosen_quiz = query_1.first()
-    print chosen_quiz.id
+    if query_1.count() == 0:
+        random_query = Quiz.query.order_by(db.func.random())
+        chosen_quiz = random_query.first()
+    else:
+        chosen_quiz = query_1.first()
 
-    for quiz in query_1.all():
-        if quiz.id not in completed_quiz_ids and quiz.cluster_id not in completed_quiz_clusters:
-            chosen_quiz = quiz
-            break
-    return chosen_quiz.id, chosen_quiz.num_questions
+        for quiz in query_1.all():
+            if quiz.id not in completed_quiz_ids and quiz.cluster_id not in completed_quiz_clusters:
+                chosen_quiz = quiz
+                break
+    return chosen_quiz.id, chosen_quiz.num_questions, chosen_quiz.subreddit
 
 
 # Generic class to get experiment assignment off of uuid by taking md5 of that value
@@ -279,8 +281,8 @@ def start_game():
     if request.args.get('quiz_id') is None:
         sub_param = request.args.get('article_source')
         [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
-
-        quiz_id, num_questions = get_new_quiz(current_uuid, subreddit)
+        quiz_id, num_questions, sub_param = get_new_quiz(current_uuid, subreddit)
+        [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
 
     else:
         quiz_id = request.args.get('quiz_id')
