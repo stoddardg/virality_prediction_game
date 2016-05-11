@@ -499,7 +499,7 @@ def load_quiz(current_uuid, subreddit, quiz_id=None):
     print "quiz_id", current_quiz.id
 
 
-    questions = Quiz_to_ImagePair.query.filter_by(quiz_id=current_quiz.id).order_by(db.func.random()).limit(num_quiz_questions).all()
+    questions = Quiz_to_ImagePair.query.filter_by(quiz_id=current_quiz.id).order_by(db.func.random()).limit(num_quiz_questions).limit(max_questions)
     image_pairs = []
     for q in questions:
         if np.random.randint(2) == 0:
