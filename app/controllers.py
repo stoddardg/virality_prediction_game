@@ -172,7 +172,7 @@ def get_game_start_data():
     image_pair_json_data = []
     for pair in image_pairs:
         temp_data = {}
-        temp_data['image_1_url'] = convert_imgur_url(pair[0].url, size=None)
+        temp_data['image_1_url'] = convert_imgur_url(pair[0].url, size='l')
         
 
         # temp_data['image_1_title'] = " "
@@ -186,7 +186,7 @@ def get_game_start_data():
         temp_data['image_1_lightbox_src'] = pair[0].url
         temp_data['image_1_reddit_id'] = pair[0].reddit_id
 
-        temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size=None)
+        temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size='l')
         # temp_data['image_2_title'] = " "
 
         temp_data['image_2_title'] = pair[1].title
@@ -271,6 +271,7 @@ def get_experimental_params(current_uuid):
     return experiment_params
 
 
+max_questions = 40
 
 @predict_game.route('/')
 def start_game():
@@ -289,6 +290,9 @@ def start_game():
         sub_param = get_quiz_subreddit(quiz_id)
         [subreddit, pic_source_url, pic_source_name] = get_subreddit_info(subreddit=sub_param)
         num_questions = get_quiz_num_questions(quiz_id)
+
+
+    num_questions = min(num_questions, max_questions)
 
     experiment_params = get_experimental_params(current_uuid)
 
