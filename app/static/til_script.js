@@ -323,25 +323,25 @@ function resize_images_and_title()
 
 
 
-    $(".title_container").css("height", "")
-    $("#outer_image_container").css("height","1000px")
-    $("#image_row").css("height","1000px")
-    $(".image_column").css("height","1000px")
-    $(".image_title_container").css("height","1000px")
-    $(".image_container").css("height", "1000px")
+    // $(".title_container").css("height", "")
+    // $("#outer_image_container").css("height","1000px")
+    // $("#image_row").css("height","1000px")
+    // $(".image_column").css("height","1000px")
+    // $(".image_title_container").css("height","1000px")
+    // $(".image_container").css("height", "1000px")
 
 
     console.log("outer_image_container height " + $("#outer_image_container").height())
 
-    $('body').css('overflow', 'hidden')
+    // $('body').css('overflow', 'hidden')
 
 
     var current_page_height = $(window).height()
-    console.log(current_page_height)
+
 
 
     max_image_height = Math.min( current_page_height*.333, Math.max($("#image_1").height(), $("#image_2").height())   )
-    $(".image_container").css("height", max_image_height+"px")
+    // $(".image_container").css("height", max_image_height+"px")
 
 
 
@@ -369,15 +369,15 @@ function resize_images_and_title()
 
     max_title_height = Math.min(current_page_height*.5, Math.max(image_1_title_height, image_2_title_height))
     // max_title_height = current_page_height*.5
-    $(".title_container").css("height", (max_title_height+1)+"px")
+    // $(".title_container").css("height", (max_title_height+1)+"px")
 
 
     container_height = max_title_height + max_image_height
 
-    $("#outer_image_container").css("height", container_height+"px")
-    $("#image_row").css("height", container_height+"px")
-    $(".image_column").css("height", container_height+"px")
-    $(".image_title_container").css("height", container_height+"px")
+    // $("#outer_image_container").css("height", container_height+"px")
+    // $("#image_row").css("height", container_height+"px")
+    // $(".image_column").css("height", container_height+"px")
+    // $(".image_title_container").css("height", container_height+"px")
 
     console.log("container_height " + container_height)
 
@@ -385,28 +385,28 @@ function resize_images_and_title()
 
 
 
-    console.log("max title height " + max_title_height)
-    console.log("image_1_title_height " + image_1_title_height)
-    while( image_1_title_height >= max_title_height && image_1_title_height > 0)
-    {
-        console.log("in loop")
-        console.log(image_1_title_height)
-        var font_size = parseFloat($("#image_1_title").css("font-size"))
-        image_1_title.css("font-size", (font_size -1) + "px")
-        image_1_title_height = image_1_title.height()
-    }
+    // console.log("max title height " + max_title_height)
+    // console.log("image_1_title_height " + image_1_title_height)
+    // while( image_1_title_height >= max_title_height && image_1_title_height > 0)
+    // {
+    //     console.log("in loop")
+    //     console.log(image_1_title_height)
+    //     var font_size = parseFloat($("#image_1_title").css("font-size"))
+    //     image_1_title.css("font-size", (font_size -1) + "px")
+    //     image_1_title_height = image_1_title.height()
+    // }
 
-    while( image_2_title_height >= max_title_height && image_2_title_height > 0)
-    {
-        console.log("in loop")
+    // while( image_2_title_height >= max_title_height && image_2_title_height > 0)
+    // {
+    //     console.log("in loop")
 
-        var font_size = parseFloat($("#image_2_title").css("font-size"))
-        image_2_title.css("font-size", (font_size -1) + "px")
-        image_2_title_height = image_2_title.height()
-    }
+    //     var font_size = parseFloat($("#image_2_title").css("font-size"))
+    //     image_2_title.css("font-size", (font_size -1) + "px")
+    //     image_2_title_height = image_2_title.height()
+    // }
 
 
-    $('body').css('overflow', 'auto');
+    // $('body').css('overflow', 'auto');
 
 
 }
@@ -631,9 +631,9 @@ function enable_buttons(json_data)
 
 
     $("#vote_button_1").attr("class","btn btn-info")
-    $("#vote_button_1").html("Left Post")
+    $("#vote_button_1").html("Post 1")
     $("#vote_button_2").attr("class","btn btn-info")
-    $("#vote_button_2").html("Right Post")
+    $("#vote_button_2").html("Post 2")
 
     // $("#num_remaining").html(total_questions - current_pair)
     $("#num_remaining").html(current_pair + 1)

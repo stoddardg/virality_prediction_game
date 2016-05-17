@@ -17,46 +17,46 @@ These posts were submitted to <a href={{pic_source_url}} target="_blank"> {{pic_
 </a> -->
 
 <div class="container">
-<div id="outer_image_container">
-<div class="row" id="image_row">      
+<div id="outer_title_container">
+<div class="row" >      
 
-    <div class="col-md-6 col-xs-6 image_column">
-    <div class="image_title_container" id="image_1_container">
-      <div class="title_container">
-           <span id="image_1_title" class="image_title"> {{image_1_title}}</span> 
+    <div class="col-md-12 col-xs-12 ">
+      <div class="til_container">
+           <span class="til_title" style="font-weight:bold"> Post 1: </span>  <span id="image_1_title"  class="til_title"> {{image_1_title}}</span> 
       </div>     
-    </div>
+</div>
+</div>
+<div class='row'>
+  <div class="col-md-12 col-xs-12">
+    <span class="domain_text"> Source: <span id='image_1_domain'> </span> <a id='image_1_link' target="_blank" href="">Link</a> </span>
+  </div>  
+
+</div>
+
+<div class="spacer"></div>
+
+<div class="row" >
 
 
-    </div>
-
-    <div class="col-md-6 col-xs-6 image_column">
+    <div class="col-md-12 col-xs-12 ">
     <div class="image_title_container" id="image_2_container">
-        <div class="title_container">
-          <span id="image_2_title" class="image_title"> {{image_2_title}} </span>
+        <div class="til_container">
+           <span class="til_title" style="font-weight:bold"> Post 2: </span>  <span id="image_2_title"  class="til_title"> {{image_1_title}}</span> 
         </div>
       </div>
     </div>
 </div>
-</div>
+
 <div class='row'>
-  <div class="col-md-6 col-xs-6">
-    Source: <span class="domain_text" id='image_1_domain'> Source: </span>
-  </div>  
-  <div class="col-md-6 col-xs-6">
-    Source: <span  class="domain_text" id='image_2_domain'> Source: </span>
-  </div>  
+ 
+  <div class="col-md-12 col-xs-12">
+    <span class="domain_text"> Source: <span id='image_2_domain'> </span> <a id='image_2_link' target="_blank" href="">Link</a> </span>
+  </div>   
 
 </div>
-<div class='row'>
-  <div class="col-md-6 col-xs-6">
-    <a id='image_1_link' target="_blank" href="">Link</a>
-  </div>  
-  <div class="col-md-6 col-xs-6">
-    <a id='image_2_link' target="_blank" href="">Link</a>
-  </div>  
-
 </div>
+</div>
+
 <hr>
 
 {% if ask_opinion %}
@@ -75,14 +75,14 @@ These posts were submitted to <a href={{pic_source_url}} target="_blank"> {{pic_
 
     <div class="col-xs-6">     
       <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="opinion_button_1" class="btn btn-info" style="text-align:center"> Left Post</button>
+        <button type="button" id="opinion_button_1" class="btn btn-info" style="text-align:center"> Post 1</button>
       </div>
      
     </div>
 
     <div class="col-xs-6">
         <div class="btn-group-vertical btn-block btn-group-lg">
-          <button type="button" id="opinion_button_2" class="btn btn-info" style="text-align:center" >Right Post</button>
+          <button type="button" id="opinion_button_2" class="btn btn-info" style="text-align:center" >Post 2</button>
         </div>
     </div>
 </div>
@@ -102,7 +102,7 @@ These posts were submitted to <a href={{pic_source_url}} target="_blank"> {{pic_
             
 
       <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="vote_button_1" class="btn btn-info">Left Post</button>
+        <button type="button" id="vote_button_1" class="btn btn-info">Post 1</button>
       </div>
 
     </div>
@@ -110,7 +110,7 @@ These posts were submitted to <a href={{pic_source_url}} target="_blank"> {{pic_
     <div class="col-md-6 col-xs-6">
         
         <div class="btn-group-vertical btn-block btn-group-lg">
-          <button type="button" id="vote_button_2" class="btn btn-info"> Right Post</button>
+          <button type="button" id="vote_button_2" class="btn btn-info"> Post 2</button>
         </div>
 
 
@@ -144,7 +144,7 @@ These posts were submitted to <a href={{pic_source_url}} target="_blank"> {{pic_
             
 
       <div class="btn-group-vertical btn-block btn-group-lg">
-        <button type="button" id="vote_button_1" class="btn btn-info">Left Post</button>
+        <button type="button" id="vote_button_1" class="btn btn-info">Post 1</button>
       </div>
 
     </div>
@@ -152,7 +152,7 @@ These posts were submitted to <a href={{pic_source_url}} target="_blank"> {{pic_
     <div class="col-md-6 col-xs-6">
         
         <div class="btn-group-vertical btn-block btn-group-lg">
-          <button type="button" id="vote_button_2" class="btn btn-info"> Right Post</button>
+          <button type="button" id="vote_button_2" class="btn btn-info">Post 2</button>
         </div>
 
 
