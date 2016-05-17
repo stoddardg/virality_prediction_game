@@ -8,6 +8,8 @@ import uuid
 import md5
 from scipy import stats
 
+from urlparse import urlparse
+
 
 from models import Post, Vote, User, SurveyResult, UserScore, Quiz, Quiz_to_ImagePair, ImagePair, OpinionVote
 from forms import SurveyForm
@@ -167,7 +169,7 @@ def get_game_start_data():
 
     print 'QUIZ ID IS ', quiz_id
 
-    image_pairs = load_quiz(current_uuid, subreddit, quiz_id=quiz_id)
+    image_pairs = load_quiz(current_uuid, subreddit, quiz_id=quiz_id, num_questions=request.cookies.get('num_questions'))
     
     image_pair_json_data = []
     for pair in image_pairs:
@@ -185,6 +187,10 @@ def get_game_start_data():
         temp_data['image_1_score'] = pair[0].score
         temp_data['image_1_lightbox_src'] = pair[0].url
         temp_data['image_1_reddit_id'] = pair[0].reddit_id
+        o = urlparse(pair[0].url)
+        temp_data['image_1_domain'] = o.netloc
+
+
 
         temp_data['image_2_url'] = convert_imgur_url(pair[1].url, size='l')
         # temp_data['image_2_title'] = " "
@@ -196,6 +202,8 @@ def get_game_start_data():
         temp_data['image_2_score'] = pair[1].score
         temp_data['image_2_lightbox_src'] = pair[1].url
         temp_data['image_2_reddit_id'] = pair[1].reddit_id
+        o = urlparse(pair[1].url)
+        temp_data['image_2_domain'] = o.netloc
 
 
         image_pair_json_data.append(temp_data)
@@ -271,7 +279,8 @@ def get_experimental_params(current_uuid):
     return experiment_params
 
 
-max_questions = 40
+max_turk_questions = 40
+max_reddit_questions = 10
 
 @predict_game.route('/')
 def start_game():
@@ -292,7 +301,10 @@ def start_game():
         num_questions = get_quiz_num_questions(quiz_id)
 
 
-    num_questions = min(num_questions, max_questions)
+    if request.args.get("turk","False") == "True":
+        num_questions = min(num_questions, max_turk_questions)
+    else:
+        num_questions = min(num_questions, max_reddit_questions)
 
     experiment_params = get_experimental_params(current_uuid)
 
@@ -330,14 +342,25 @@ def start_game():
     if ask_opinion == "False":
         ask_opinion = False
 
-
-    response = make_response( render_template('pic_game_mobile.html', 
-        pic_source_url = pic_source_url,
-        pic_source_name = pic_source_name,
-        ask_opinion = experiment_params['ask_opinion'],
-        num_questions = num_questions,
+    if subreddit == 'til' or request.args.get('text_only')=='True':
+        print 'text only'
+        response = make_response( render_template('text_game.html', 
+            pic_source_url = pic_source_url,
+            pic_source_name = pic_source_name,
+            ask_opinion = experiment_params['ask_opinion'],
+            num_questions = num_questions,
+            til_version=True,
+            )
         )
-    )
+
+    else:
+        response = make_response( render_template('pic_game_mobile.html', 
+            pic_source_url = pic_source_url,
+            pic_source_name = pic_source_name,
+            ask_opinion = experiment_params['ask_opinion'],
+            num_questions = num_questions,
+            )
+        )
 
     
     response.set_cookie(UUID_NAME, current_uuid, max_age=MAX_COOKIE_AGE)
@@ -345,6 +368,7 @@ def start_game():
     response.set_cookie('subreddit',subreddit)
     response.set_cookie('quiz_id', str(quiz_id))
     response.set_cookie('percent_correct', '', expires=0)
+    response.set_cookie('num_questions',str(num_questions))
 
     if request.args.get("turk","False") == "True":
         response.set_cookie('turk_worker',str(True))
@@ -412,10 +436,6 @@ def end_game():
         show_uuid=show_uuid,
         title="Reddit Use"))
 
-    # if request.cookies.get("turk_worker","False") == "True":
-    #     response_data['turk_worker'] = 1
-    # else:
-    #     response_data['turk_worker'] = 0
 
     return response
 
@@ -489,7 +509,7 @@ def get_quiz_num_questions(quiz_id):
     return current_quiz.num_questions
 
 
-def load_quiz(current_uuid, subreddit, quiz_id=None):
+def load_quiz(current_uuid, subreddit, quiz_id=None, num_questions=None):
     
     if quiz_id is not None:
         current_quiz = Quiz.query.filter_by(id=quiz_id).first()
@@ -499,7 +519,10 @@ def load_quiz(current_uuid, subreddit, quiz_id=None):
     print "quiz_id", current_quiz.id
 
 
-    questions = Quiz_to_ImagePair.query.filter_by(quiz_id=current_quiz.id).order_by(db.func.random()).limit(num_quiz_questions).limit(max_questions)
+    temp_questions = max_turk_questions
+    if num_questions is not None:
+        temp_questions = int(num_questions)
+    questions = Quiz_to_ImagePair.query.filter_by(quiz_id=current_quiz.id).order_by(db.func.random()).limit(num_quiz_questions).limit(temp_questions)
     image_pairs = []
     for q in questions:
         if np.random.randint(2) == 0:
@@ -537,7 +560,7 @@ def get_subreddit_info(subreddit=None):
     # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn','CrappyDesign','photocritique']
     # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn']
 
-    subreddits = ['EarthPorn','Art','mildlyinteresting']
+    subreddits = ['EarthPorn','Art','mildlyinteresting', 'til']
 
 
     if subreddit == 'aww':
@@ -570,6 +593,9 @@ def get_subreddit_info(subreddit=None):
     elif subreddit == 'mildlyinteresting':
         pic_source_url = 'https://www.reddit.com/r/mildlyinteresting'
         pic_source_name = 'reddit.com/r/mildlyinteresting'
+    elif subreddit == 'todayilearned':
+        pic_source_url = 'https://www.reddit.com/r/todayilearned'
+        pic_source_name = 'reddit.com/r/todayilearned'
     else:
         random_sub = choice(subreddits)
         return get_subreddit_info(subreddit=random_sub)
