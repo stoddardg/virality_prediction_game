@@ -279,7 +279,7 @@ def get_experimental_params(current_uuid):
     return experiment_params
 
 
-max_turk_questions = 40
+max_turk_questions = 25
 max_reddit_questions = 10
 
 @predict_game.route('/')
@@ -558,9 +558,9 @@ def survey():
 
 def get_subreddit_info(subreddit=None):
     # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn','CrappyDesign','photocritique']
-    # subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture','EarthPorn']
+    subreddits = ['pics','aww','OldSchoolCool','funny', 'itookapicture']
 
-    subreddits = ['EarthPorn','Art','mildlyinteresting', 'til']
+    # subreddits = ['EarthPorn','Art','mildlyinteresting', 'til']
 
 
     if subreddit == 'aww':
